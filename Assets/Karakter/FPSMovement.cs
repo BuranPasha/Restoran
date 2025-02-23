@@ -4,8 +4,12 @@ public class FPSMovement : MonoBehaviour
 {
     public CharacterController controller;
     public float speed = 5f;
+    public float sprintSpeed = 8f;  // Koþma hýzý
+    public float crouchSpeed = 2.5f; // Eðilme hýzý
     public float gravity = -9.81f;
     public float jumpHeight = 1.5f;
+    public float crouchHeight = 1f; // Eðildiðinde karakterin yüksekliði
+    public float normalHeight = 2f; // Normal karakter yüksekliði
 
     private Vector3 velocity;
     private bool isGrounded;
@@ -21,10 +25,28 @@ public class FPSMovement : MonoBehaviour
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
-        controller.Move(move * speed * Time.deltaTime);
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isGrounded;
+        bool isCrouching = Input.GetKey(KeyCode.LeftControl);
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        float currentSpeed = speed;
+        if (isSprinting)
+        {
+            currentSpeed = sprintSpeed;
+        }
+        else if (isCrouching)
+        {
+            currentSpeed = crouchSpeed;
+            controller.height = Mathf.Lerp(controller.height, crouchHeight, Time.deltaTime * 10);
+        }
+        else
+        {
+            controller.height = Mathf.Lerp(controller.height, normalHeight, Time.deltaTime * 10);
+        }
+
+        Vector3 move = transform.right * moveX + transform.forward * moveZ;
+        controller.Move(move * currentSpeed * Time.deltaTime);
+
+        if (Input.GetButtonDown("Jump") && isGrounded && !isCrouching)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
