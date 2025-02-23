@@ -1,0 +1,40 @@
+RESTORAN OYUN FİKİR ŞEYSİ
+
+Çok oyunculu bir restoran oyunu, rol dağılımı ile yemek yetiştirmeye çalışacağımız bir oyun. Kısaca restoran işletme oyunu.
+
+Oyunda olacaklar:
+
+* Motor olarak unity kullanılacak
+
+* C# ile geliştirilecek
+
+* MAX 4 kişilik
+
+* Simülasyon - Yönetim - Ekonomi oyunu
+
+* Oyunda her şey geliştirilebilir ve değiştirilebilir olacak
+
+* Zaman geçtikçe zam uygulaması olacak ki oyun hızı düşmesin
+
+* Karakter dizayn seçenekleri (olası) veya karakter modelleri
+
+* Yemek kitabı ve tarifler (Hata payı arttıkça kalite düşüşü olur.)
+
+* Değişik müşteri tipleri (Denetmen, Eleştirmen, Faruk the goril, kavga eden çift)
+
+* Yıldızlı rate sistemi müşteriler için
+
+* Gelişim ağacı (farklı yemekleri öğrenmek için veya mobilya geliştirmeleri için)
+
+* Rakip restoranlar (sosyal ağ) (sabote etme olayı belki)
+
+* In game events (yangın?, hırsızlık, küçük çocuk, kira zamanı ve zammı, İndirime girmeler, ünlü yemekler vb.)  
+
+* Yemek kovası, götür, havalı go, Tıkla götürsün (online mağazalar)
+
+* Bakkal, Kasap, Mobilyacı, Terzi, Supermarket veya internetten zamlı sipariş ama yanında spawn
+
+* Yemeklerin tarihi geçebilir dikkat edilmeli
+
+
+ 
