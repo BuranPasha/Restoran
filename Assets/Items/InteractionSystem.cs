@@ -2,47 +2,56 @@ using UnityEngine;
 
 public class InteractionSystem : MonoBehaviour
 {
-    public GameObject interactionText;  // UI Text Referansý
-    public float raycastDistance = 3f;  // Ray'in mesafesi
-    public Transform holdParent;  // Nesneyi tutacak yer (örneðin, oyuncunun elleri)
-    private GameObject currentObject;  // Þu an tutulan nesne
+    public GameObject interactionText; // UI'da "Press E" yazýsýný gösteren nesne
+    public float raycastDistance = 3f; // Etkileþim mesafesi
+    public Transform holdParent;
+    private GameObject currentObject;
 
-    private Camera playerCamera;  // Oyuncunun kamerasý
+    private Camera playerCamera;
 
     void Start()
     {
-        playerCamera = Camera.main;  // Oyuncunun kamerasýný al
-        interactionText.SetActive(false);  // Baþlangýçta gizle
+        playerCamera = Camera.main;
+        interactionText.SetActive(false);
     }
 
     void Update()
     {
         RaycastHit hit;
-        Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);  // Kamera ekranýndan ray oluþtur
+        Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hit, raycastDistance))  // Ray ile etkileþimli nesneleri tespit et
+        if (Physics.Raycast(ray, out hit, raycastDistance))
         {
-            if (hit.collider.CompareTag("Interactable"))  // Etkileþimli objeye çarptýk
+            if (hit.collider.CompareTag("Interactable"))
             {
-                interactionText.SetActive(true);  // UI yazýsýný göster
-                if (Input.GetKeyDown(KeyCode.E))  // E tuþuna basýldýðýnda etkileþim
+                interactionText.SetActive(true);
+
+                if (Input.GetKeyDown(KeyCode.E))
                 {
-                    if (currentObject == null)  // Eðer nesne elinizde deðilse, al
+                    // Eðer etkileþime girilen nesne bir sandalye ise, oturma fonksiyonunu çaðýr
+                    if (hit.collider.GetComponent<InteractableSandalyeler>())
                     {
-                        currentObject = hit.collider.gameObject;  // Nesneyi alýn
-                        hit.collider.GetComponent<Interactable>().PickUp(currentObject, holdParent);  // Nesneyi tutma
+                        hit.collider.GetComponent<InteractableSandalyeler>().SitOrStand();
                     }
-                    else  // Eðer nesne elinizdeyse, býrak
+                    else if (hit.collider.GetComponent<Interactable>())
                     {
-                        currentObject.GetComponent<Interactable>().Drop(currentObject);
-                        currentObject = null;  // Elinizdeki nesneyi býrakýn
+                        if (currentObject == null)
+                        {
+                            currentObject = hit.collider.gameObject;
+                            hit.collider.GetComponent<Interactable>().PickUp(currentObject, holdParent);
+                        }
+                        else
+                        {
+                            currentObject.GetComponent<Interactable>().Drop(currentObject);
+                            currentObject = null;
+                        }
                     }
                 }
             }
         }
         else
         {
-            interactionText.SetActive(false);  // Objeye çarpmadýðýnda yazýyý gizle
+            interactionText.SetActive(false);
         }
     }
 }

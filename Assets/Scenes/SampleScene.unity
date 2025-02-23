@@ -575,6 +575,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!4 &293758191 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5e2445802a9f4564fa3cc17d93d49f6b, type: 3}
+  m_PrefabInstance: {fileID: 663769945}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &293758192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 293758183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d07e42e9b435e3e4fbad301bae8b8aa7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sitPoint: {fileID: 1964202646}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1039,9 +1057,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: sandalye
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5e2445802a9f4564fa3cc17d93d49f6b, type: 3}
+      propertyPath: m_TagString
+      value: Interactable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5e2445802a9f4564fa3cc17d93d49f6b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1964202646}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5e2445802a9f4564fa3cc17d93d49f6b, type: 3}
       insertIndex: -1
@@ -1049,6 +1074,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5e2445802a9f4564fa3cc17d93d49f6b, type: 3}
       insertIndex: -1
       addedObject: {fileID: 293758187}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 5e2445802a9f4564fa3cc17d93d49f6b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 293758192}
   m_SourcePrefab: {fileID: 100100000, guid: 5e2445802a9f4564fa3cc17d93d49f6b, type: 3}
 --- !u!1 &798038845 stripped
 GameObject:
@@ -1468,7 +1496,7 @@ GameObject:
   - component: {fileID: 1346428339}
   m_Layer: 0
   m_Name: FPS_Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2087,6 +2115,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1964202645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1964202646}
+  m_Layer: 0
+  m_Name: SitPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1964202646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1964202645}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.70710677, y: 0, z: 0, w: -0.70710677}
+  m_LocalPosition: {x: -3.32, y: -2.16, z: 6.38}
+  m_LocalScale: {x: 10.609375, y: 10.441312, z: 10.564009}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 293758191}
+  m_LocalEulerAnglesHint: {x: -810, y: -270, z: -90}
 --- !u!1 &2079086321
 GameObject:
   m_ObjectHideFlags: 0
