@@ -41,6 +41,7 @@ public class PlayerInteraction : MonoBehaviour
                 {
                     heldItem.transform.SetParent(holdPoint);
                     heldItem.transform.position = holdPoint.position;
+                    // Elin dönüþü ile nesnenin dönüþünü uyumlu hale getir
                     heldItem.transform.rotation = holdPoint.rotation * Quaternion.Inverse(itemHoldPoint.localRotation);
                 }
                 else

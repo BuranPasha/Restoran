@@ -27,9 +27,12 @@ public class InteractableSandalyeler : MonoBehaviour
             // Önce karakter kontrolcüsünü devre dýþý býrak (hareketi kapat)
             controller.enabled = false;
 
-            // Oyuncuyu oturma noktasýna taþý ve yönünü düzelt
+            // Oturma noktasýna taþýmadan önce sandalyenin dönüþünü al
+            Quaternion chairRotation = sitPoint.rotation;
+
+            // Oyuncuyu oturma noktasýna taþý ve yönünü sandalyenin dönüþüne göre ayarla
             player.position = sitPoint.position;
-            player.rotation = Quaternion.Euler(0, sitPoint.rotation.eulerAngles.y + 180, 0);
+            player.rotation = Quaternion.Euler(0, chairRotation.eulerAngles.y + 180, 0); // Sandalyenin dönüþüne göre ayarla
 
             isSitting = true;
         }
