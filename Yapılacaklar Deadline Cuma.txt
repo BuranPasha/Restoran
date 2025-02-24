@@ -1,0 +1,74 @@
+ANA AMAÇ : TEMMUZ BAŞINA OYUN ÇIKACAK TEMMUZ 1
+
+BURHAN :
+
+-Musluk
+-Ocak
+-Kapı
+-Pencere
+-Çatak
+-Kaşal
+-Tepsi
+-Tost Makinesi
+-Bardak + bardak kırılmış
+-Tava
+-Tencere
+-Sebzeler - kesik
+-Tabak
+-Telefon ekran çizimi
+-Envater için çizimler
+
+
+-Citroen amck
+-Silahlar
+-Cezve
+-Otomat
+-Tuzluk
+-Peçetelik
+-DEFTER
+-SÜRAHİ
+-MİKRODALGA
+-Menü
+-Kesme Tahtası
+-Et - kesilmiş et
+-Balık - kesilmiş balık
+
+
+
+KAYRA VE CEMAL :
+
+-Masa
+-Sandalye
+-Kasiyer Kasası
+-Bulaşık makinesi
+-Blender
+-Fritöz
+-Ekmek Kızartma makinesi
+-Telefon
+-Dolap
+
+
+-Mop
+-Süpürge
+-Levye
+-Tezgah
+-Buzdolabı
+-Dondurucu
+-mp3 teyyp
+-Yumurta - Kırılmış yumurta
+-çöp kutusu
+
+
+-Mustafa Metehan  -  aLi kan
+
+-Envanter
+-Movement 
+-Yerleştirme
+-Etkileşimler
+-Pişirme
+-Geçişler (örn bardak düşünce bardak kırlmış bardak olur)
+
+
+-Para
+-Telefon 
+-malzeme alma uygulaması
