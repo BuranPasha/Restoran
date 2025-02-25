@@ -5,9 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Knife
-  - Interactable
-  - Bardak
-  - Sink
+  - Pickable
   layers:
   - Default
   - TransparentFX
