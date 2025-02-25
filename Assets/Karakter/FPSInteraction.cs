@@ -7,6 +7,7 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     public Transform holdPosition;  // Oyuncunun el pozisyonu
     private GameObject heldObject = null;  // Þu anda tutulan nesne
     private Vector3 originalScale;  // Itemin orijinal scale'ini saklamak için bir deðiþken
+    private bool isItemHeld = false;  // Item tutma durumu (local oyuncu için)
 
     void Update()
     {
@@ -61,6 +62,9 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
         // Scale'ini sabitleme
         objectToPickUp.transform.localScale = originalScale; // Orijinal scale'i geri getiriyoruz
+
+        // Item tutulma durumunu iþaretle
+        isItemHeld = true;
     }
 
     void DropObject()
@@ -69,6 +73,9 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         heldObject.GetComponent<Rigidbody>().isKinematic = false; // Fiziksel etkiye tekrar izin ver
         heldObject.transform.SetParent(null);  // Nesne artýk oyuncunun elinde deðil
         heldObject = null; // Þu anda tutulan nesne yok
+
+        // Item tutulma durumunu sýfýrla
+        isItemHeld = false;
     }
 
     // Photon üzerinden senkronize etmek için OnPhotonSerializeView fonksiyonu
@@ -77,14 +84,21 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             // Nesne tutulduðunda, durumu yazdýr
-            stream.SendNext(heldObject != null);
+            stream.SendNext(isItemHeld);
         }
         else
         {
             // Diðer oyunculardan gelen verilerle güncelleme
-            bool isObjectHeld = (bool)stream.ReceiveNext();
-            if (!isObjectHeld && heldObject != null)
+            isItemHeld = (bool)stream.ReceiveNext();
+
+            if (isItemHeld && heldObject == null)
             {
+                // Eðer diðer oyuncu itemi tutuyorsa, bu itemi yerel oyuncu için al
+                // Burada nesneyi elle alma iþlemi yapýlabilir (örneðin, onu fiziksel olarak yerleþtirme)
+            }
+            else if (!isItemHeld && heldObject != null)
+            {
+                // Eðer item býrakýlmýþsa, bunu yerel oyuncuya senkronize et
                 DropObject();
             }
         }
