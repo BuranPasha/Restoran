@@ -8,20 +8,19 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     private GameObject heldObject = null;  // Þu anda tutulan nesne
     private Vector3 originalScale;  // Itemin orijinal scale'ini saklamak için bir deðiþken
     private bool isItemHeld = false;  // Item tutma durumu (local oyuncu için)
+    private Rigidbody heldRigidbody;  // Tutulan nesnenin Rigidbody bileþeni
+    private PhotonView heldObjectPhotonView;  // Nesnenin PhotonView bileþeni
 
     void Update()
     {
-        // E tuþuna basýldýðýnda
         if (Input.GetKeyDown(KeyCode.E) && photonView.IsMine)
         {
             if (heldObject == null)
             {
-                // Eðer tutulan nesne yoksa, bir nesneyi al
                 TryPickUp();
             }
             else
             {
-                // Eðer tutulan nesne varsa, býrak
                 DropObject();
             }
         }
@@ -29,17 +28,29 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
     void TryPickUp()
     {
-        // Oyuncunun bakýþ açýsýndan belirli bir mesafedeki nesneye bakýyoruz
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out hit, interactionDistance))
         {
-            // Nesneyle etkileþim kurabiliriz
             if (hit.collider.CompareTag("Pickable"))
             {
-                heldObject = hit.collider.gameObject;
-                originalScale = heldObject.transform.localScale;  // Orijinal scale'ini saklýyoruz
+                GameObject objectToPickUp = hit.collider.gameObject;
+                PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
+
+                // Eðer nesne baþka bir oyuncu tarafýndan alýndýysa iþlem yapma
+                if (objectPhotonView.Owner != null && !objectPhotonView.IsMine)
+                {
+                    return; // Baþka biri tutuyorsa itemi alamayýz.
+                }
+
+                // Sahipliði al ve itemi tut
+                objectPhotonView.RequestOwnership();
+                heldObject = objectToPickUp;
+                heldObjectPhotonView = objectPhotonView;
+                heldRigidbody = heldObject.GetComponent<Rigidbody>();
+                originalScale = heldObject.transform.localScale;
+
                 PickUpObject(heldObject);
             }
         }
@@ -47,59 +58,53 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
     void PickUpObject(GameObject objectToPickUp)
     {
-        // Nesneyi oyuncuya yakýn bir pozisyona taþýyoruz
-        // Nesneyi tutarken scale'ini deðiþtirmemek için öncelikle orijinal scale'i geri alýyoruz
-        objectToPickUp.transform.SetParent(holdPosition); // Elin pozisyonu
+        if (heldRigidbody != null)
+        {
+            heldRigidbody.isKinematic = true;
+            heldRigidbody.useGravity = false;
+            heldRigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
+        }
 
-        // Nesneyi fiziksel olarak etkileþime sokmamamýz için rigidbody'yi kinematik yapýyoruz
-        objectToPickUp.GetComponent<Rigidbody>().isKinematic = true;
-
-        // Nesneyi el pozisyonunun merkezine yerleþtiriyoruz
+        objectToPickUp.transform.SetParent(holdPosition);
         objectToPickUp.transform.localPosition = Vector3.zero;
+        objectToPickUp.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        objectToPickUp.transform.localScale = originalScale;
 
-        // Nesneyi döndürme iþlemi yapabiliriz (isteðe baðlý)
-        objectToPickUp.transform.localRotation = Quaternion.Euler(0, 90, 0); // Y ekseninde 90 derece döndürme
-
-        // Scale'ini sabitleme
-        objectToPickUp.transform.localScale = originalScale; // Orijinal scale'i geri getiriyoruz
-
-        // Item tutulma durumunu iþaretle
         isItemHeld = true;
     }
 
     void DropObject()
     {
-        // Nesneyi tekrar serbest býrak
-        heldObject.GetComponent<Rigidbody>().isKinematic = false; // Fiziksel etkiye tekrar izin ver
-        heldObject.transform.SetParent(null);  // Nesne artýk oyuncunun elinde deðil
-        heldObject = null; // Þu anda tutulan nesne yok
+        if (heldRigidbody != null)
+        {
+            heldRigidbody.isKinematic = false;
+            heldRigidbody.useGravity = true;
+            heldRigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        }
 
-        // Item tutulma durumunu sýfýrla
+        heldObject.transform.SetParent(null);
+        heldObject = null;
         isItemHeld = false;
     }
 
-    // Photon üzerinden senkronize etmek için OnPhotonSerializeView fonksiyonu
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            // Nesne tutulduðunda, durumu yazdýr
             stream.SendNext(isItemHeld);
+            stream.SendNext(heldObject != null ? heldObject.transform.position : Vector3.zero);
+            stream.SendNext(heldObject != null ? heldObject.transform.rotation : Quaternion.identity);
         }
         else
         {
-            // Diðer oyunculardan gelen verilerle güncelleme
             isItemHeld = (bool)stream.ReceiveNext();
+            Vector3 receivedPosition = (Vector3)stream.ReceiveNext();
+            Quaternion receivedRotation = (Quaternion)stream.ReceiveNext();
 
-            if (isItemHeld && heldObject == null)
+            if (heldObject != null)
             {
-                // Eðer diðer oyuncu itemi tutuyorsa, bu itemi yerel oyuncu için al
-                // Burada nesneyi elle alma iþlemi yapýlabilir (örneðin, onu fiziksel olarak yerleþtirme)
-            }
-            else if (!isItemHeld && heldObject != null)
-            {
-                // Eðer item býrakýlmýþsa, bunu yerel oyuncuya senkronize et
-                DropObject();
+                heldObject.transform.position = receivedPosition;
+                heldObject.transform.rotation = receivedRotation;
             }
         }
     }
