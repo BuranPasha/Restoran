@@ -815,30 +815,13 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 1
-  OwnershipTransfer: 1
+  Synchronization: 3
+  OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents:
-  - {fileID: 826956126}
+  ObservedComponents: []
   sceneViewId: 3
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &826956126
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 826956119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 1
-  m_TeleportEnabled: 0
-  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1130,9 +1113,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49643cadaca7a7147abf9e1ecd3b9043, type: 3}
       insertIndex: -1
       addedObject: {fileID: 826956125}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49643cadaca7a7147abf9e1ecd3b9043, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 826956126}
   m_SourcePrefab: {fileID: 100100000, guid: 49643cadaca7a7147abf9e1ecd3b9043, type: 3}
 --- !u!1001 &1110112486
 PrefabInstance:
@@ -1203,9 +1183,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100000, guid: 4be4f079cd4d6c14fbe4259f895d9bf0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1623223298}
-    - targetCorrespondingSourceObject: {fileID: 100000, guid: 4be4f079cd4d6c14fbe4259f895d9bf0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1623223299}
   m_SourcePrefab: {fileID: 100100000, guid: 4be4f079cd4d6c14fbe4259f895d9bf0, type: 3}
 --- !u!1001 &1206200882
 PrefabInstance:
@@ -1446,15 +1423,13 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 1
-  OwnershipTransfer: 1
+  Synchronization: 3
+  OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents:
-  - {fileID: 1623223299}
+  ObservedComponents: []
   sceneViewId: 2
   InstantiationId: 0
   isRuntimeInstantiated: 0
-<<<<<<< Updated upstream
 --- !u!1 &1750270903 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e900f3b8c50b7047a6febc879f99345, type: 3}
@@ -1462,15 +1437,10 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!54 &1750270904
 Rigidbody:
-=======
---- !u!114 &1623223299
-MonoBehaviour:
->>>>>>> Stashed changes
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-<<<<<<< Updated upstream
   m_GameObject: {fileID: 1750270903}
   serializedVersion: 4
   m_Mass: 1
@@ -1513,18 +1483,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 31.816486, y: 19.943636, z: 19.94364}
   m_Center: {x: -6.1082544, y: -0.00000095367415, z: 0}
-=======
-  m_GameObject: {fileID: 1623223292}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 1
-  m_TeleportEnabled: 0
-  m_TeleportIfDistanceGreaterThan: 3
->>>>>>> Stashed changes
 --- !u!1 &1951587438
 GameObject:
   m_ObjectHideFlags: 0
