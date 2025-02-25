@@ -23,6 +23,13 @@ public class PlayerMovement : MonoBehaviour
     private PhotonView photonView;
     private float verticalRotation = 0f;
 
+    // Sandalyeye oturma ve kalkma iþlemi için deðiþkenler
+    private bool isSitting = false;
+    private Transform chairPosition;  // Sandalyenin oturma pozisyonu
+    private Vector3 originalPosition; // Sandalyeden kalkarken orijinal pozisyon
+    private Quaternion originalRotation; // Sandalyeden kalkarken orijinal rotasyon
+    private float originalCameraHeight; // Kameranýn orijinal yüksekliði
+
     void Start()
     {
         photonView = GetComponent<PhotonView>();
@@ -38,17 +45,28 @@ public class PlayerMovement : MonoBehaviour
         {
             playerCamera.gameObject.SetActive(false);
         }
+
+        // Sandalyenin oturma noktasý (Trigger olarak iþaretlendiðinden emin olun)
+        chairPosition = transform.Find("SitPoint");  // "SitPoint" objesini doðru olarak yerleþtirin
+        if (chairPosition == null)
+        {
+            Debug.LogError("SitPoint not found. Make sure it is attached to the chair.");
+        }
     }
 
     void Update()
     {
         if (!photonView.IsMine || characterController == null) return;
 
-        Move();
-        ApplyGravity();
-        LookAround();
-        HandleCrouch();
-        Jump();
+        // Sandalyede deðilken normal hareketi kontrol et
+        if (!isSitting)
+        {
+            Move();
+            ApplyGravity();
+            LookAround();
+            HandleCrouch();
+            Jump();
+        }
     }
 
     void Move()
@@ -146,6 +164,65 @@ public class PlayerMovement : MonoBehaviour
         playerCamera.transform.localPosition = new Vector3(0, originalHeight / 2, 0);
     }
 
+    // OnTriggerEnter ile sandalyeye otur
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Chair") && !isSitting)  // Sandalyenin üzerine girdiðinde
+        {
+            SitOnChair();  // Sandalyeye otur
+        }
+    }
+
+    // OnTriggerExit ile sandalyeden kalk
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Chair") && isSitting)  // Sandalyeden çýktýðýnda
+        {
+            StandUpFromChair();  // Sandalyeden kalk
+        }
+    }
+
+    // Sandalyeye oturmak için metod
+    void SitOnChair()
+    {
+        isSitting = true;
+
+        // Oturulacak pozisyonu ayarla
+        originalPosition = transform.position;
+        originalRotation = transform.rotation;
+        originalCameraHeight = playerCamera.transform.localPosition.y;
+
+        // Karakteri sandalyeye oturacak þekilde yerleþtir
+        transform.position = chairPosition.position;
+        transform.rotation = chairPosition.rotation;
+
+        // Kamerayý sandalyeye uygun þekilde yerleþtir
+        playerCamera.transform.localPosition = new Vector3(0, chairPosition.position.y, 0);
+
+        // Karakterin hareketini geçici olarak devre dýþý býrak
+        characterController.enabled = false;
+
+        photonView.RPC("SyncSit", RpcTarget.Others, true);
+    }
+
+    // Sandalyeden kalkmak için metod
+    void StandUpFromChair()
+    {
+        isSitting = false;
+
+        // Karakteri eski pozisyona geri getir
+        transform.position = originalPosition;
+        transform.rotation = originalRotation;
+
+        // Kamerayý eski yüksekliðine geri getir
+        playerCamera.transform.localPosition = new Vector3(0, originalCameraHeight, 0);
+
+        // Karakteri hareket ettirmek için characterController'ý tekrar etkinleþtir
+        characterController.enabled = true;
+
+        photonView.RPC("SyncSit", RpcTarget.Others, false);
+    }
+
     // Diðer oyunculara senkronize edilen hareket bilgilerini gönder
     [PunRPC]
     void SyncMovement(Vector3 position, Quaternion rotation)
@@ -172,6 +249,20 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             StandUp();
+        }
+    }
+
+    // Sandalyeye oturma durumu için senkronizasyon
+    [PunRPC]
+    void SyncSit(bool sitting)
+    {
+        if (sitting)
+        {
+            SitOnChair();
+        }
+        else
+        {
+            StandUpFromChair();
         }
     }
 }
