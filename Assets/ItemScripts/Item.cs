@@ -6,6 +6,15 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     public enum MeatState { Raw, Cooked, Burnt }
     public MeatState currentState = MeatState.Raw;
 
+    public GameObject rawModel;    // Çið et modeli
+    public GameObject cookedModel; // Piþmiþ et modeli
+    public GameObject burntModel;  // Yanmýþ et modeli
+
+    void Start()
+    {
+        UpdateModel(); // Baþlangýçta modeli güncelle
+    }
+
     // Piþirme durumunu güncelleyen metod
     public void SetCooked()
     {
@@ -30,16 +39,39 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     void RPC_SetCooked()
     {
         currentState = MeatState.Cooked;
+        UpdateModel(); // Modeli güncelle
         Debug.Log("Et piþti!");
-        // Görsel olarak piþmiþ durumu güncelle (örneðin, materyal deðiþtir)
     }
 
     [PunRPC]
     void RPC_SetBurnt()
     {
         currentState = MeatState.Burnt;
+        UpdateModel(); // Modeli güncelle
         Debug.Log("Et yandý!");
-        // Görsel olarak yanmýþ durumu güncelle (örneðin, materyal deðiþtir)
+    }
+
+    // Modeli güncelleyen metod
+    void UpdateModel()
+    {
+        // Tüm modelleri gizle
+        if (rawModel != null) rawModel.SetActive(false);
+        if (cookedModel != null) cookedModel.SetActive(false);
+        if (burntModel != null) burntModel.SetActive(false);
+
+        // Duruma göre ilgili modeli göster
+        switch (currentState)
+        {
+            case MeatState.Raw:
+                if (rawModel != null) rawModel.SetActive(true);
+                break;
+            case MeatState.Cooked:
+                if (cookedModel != null) cookedModel.SetActive(true);
+                break;
+            case MeatState.Burnt:
+                if (burntModel != null) burntModel.SetActive(true);
+                break;
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -51,6 +83,7 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             currentState = (MeatState)stream.ReceiveNext();
+            UpdateModel(); // Modeli güncelle
         }
     }
 }
