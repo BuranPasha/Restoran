@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 65329282}
   - component: {fileID: 65329281}
   - component: {fileID: 65329286}
+  - component: {fileID: 65329287}
   m_Layer: 0
   m_Name: Stove
   m_TagString: Untagged
@@ -271,6 +272,18 @@ MonoBehaviour:
   sceneViewId: 6
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!114 &65329287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65329280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e608ff1f42cdcd54ba40830ccf3e81b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &72685045
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -297,7 +310,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5895c68203b60847bfadff13d7c4a98, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.55
+      value: 0.78
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b5895c68203b60847bfadff13d7c4a98, type: 3}
       propertyPath: m_LocalPosition.z
@@ -973,6 +986,28 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4.392029, y: 2, z: 2}
   m_Center: {x: 0.034704328, y: 0, z: 0}
+--- !u!114 &632654495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 632654490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 7
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &791845422 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: d40f3021e1a1a144a9e7f21c2d64126e, type: 3}
@@ -1727,6 +1762,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b3816591babb8cd4d9adc328da8fbb3c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 632654491}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: b3816591babb8cd4d9adc328da8fbb3c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 632654495}
   m_SourcePrefab: {fileID: 100100000, guid: b3816591babb8cd4d9adc328da8fbb3c, type: 3}
 --- !u!1 &1494915345
 GameObject:
@@ -1844,6 +1882,7 @@ GameObject:
   - component: {fileID: 1586938080}
   - component: {fileID: 1586938079}
   - component: {fileID: 1586938078}
+  - component: {fileID: 1586938082}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
@@ -1940,6 +1979,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1586938082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1586938077}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 1
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1623223292 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 4be4f079cd4d6c14fbe4259f895d9bf0, type: 3}
@@ -2072,8 +2133,8 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

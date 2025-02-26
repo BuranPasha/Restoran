@@ -27,6 +27,14 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         if (Physics.Raycast(ray, out hit, interactionDistance))
         {
             GameObject objectToPickUp = hit.collider.gameObject;
+
+            // Sadece "Pickable" tag'ine sahip nesneleri al
+            if (!objectToPickUp.CompareTag("Pickable"))
+            {
+                Debug.Log("Bu nesne alýnamaz: " + objectToPickUp.name);
+                return;
+            }
+
             PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
 
             if (objectPhotonView == null)
