@@ -11,14 +11,15 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
     public float burningTime = 15f;  // Yanma süresi (saniye)
     private float currentCookingTime = 0f;  // Geçen piþirme süresi
     private bool isCooking = false;  // Piþirme iþlemi devam ediyor mu?
+    public float interactionDistance = 3f;  // Etkileþim mesafesi
 
     void Update()
     {
         // PhotonView null ise iþlem yapma
         if (photonView == null) return;
 
-        // Sadece ocaðýn sahibi ocaðý açýp kapatabilir
-        if (Input.GetKeyDown(KeyCode.F) && photonView.IsMine)
+        // Herhangi bir oyuncu ocaðý açýp kapatabilir
+        if (Input.GetKeyDown(KeyCode.F))
         {
             ToggleStove();
         }
