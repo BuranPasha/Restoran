@@ -8,6 +8,7 @@ TagManager:
   - Pickable
   - Chair
   - LeftPosition
+  - NoPickup
   layers:
   - Default
   - TransparentFX

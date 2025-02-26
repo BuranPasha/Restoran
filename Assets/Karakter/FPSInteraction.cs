@@ -23,21 +23,34 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
         if (Physics.Raycast(ray, out hit, interactionDistance))
         {
             GameObject objectToPickUp = hit.collider.gameObject;
             PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
-            if (objectPhotonView != null)
+
+            if (objectPhotonView == null)
             {
-                objectPhotonView.RequestOwnership();
-                photonView.RPC("RPC_PickUpObject", RpcTarget.All, objectPhotonView.ViewID);
+                Debug.Log("Nesne PhotonView bileþenine sahip deðil: " + objectToPickUp.name);
+                return;
             }
+
+            // Eðer baþkasý sahip deðilse direkt alabiliriz
+            if (!objectPhotonView.IsMine)
+            {
+                objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+            }
+
+            photonView.RPC("RPC_PickUpObject", RpcTarget.All, objectPhotonView.ViewID);
         }
     }
+
+
 
     void TryDropOrPlace()
     {
         GameObject leftPosition = GameObject.FindGameObjectWithTag(leftPositionTag);
+
         if (leftPosition != null && Vector3.Distance(transform.position, leftPosition.transform.position) <= interactionDistance)
         {
             photonView.RPC("RPC_PlaceOnLeftPosition", RpcTarget.All, heldObjectPhotonView.ViewID, leftPosition.transform.position);
@@ -60,6 +73,7 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         {
             heldRigidbody.isKinematic = true;
             heldRigidbody.useGravity = false;
+            heldRigidbody.freezeRotation = true; // Dönmeyi engelle
         }
 
         heldObject.transform.SetParent(holdPosition);
@@ -79,6 +93,7 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         if (rb != null)
         {
             rb.isKinematic = true; // Sabit konumda kalmasý için
+            rb.freezeRotation = true; // Dönmeyi engelle
         }
 
         heldObject = null;
@@ -87,8 +102,18 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     void DropObject()
     {
         if (heldObject == null) return;
+
+        PhotonView heldObjectPhotonView = heldObject.GetComponent<PhotonView>();
+        if (heldObjectPhotonView != null && heldObjectPhotonView.IsMine)
+        {
+            // Sahipliði MasterClient'a ver (sahipsiz gibi davranmasý için)
+            heldObjectPhotonView.TransferOwnership(PhotonNetwork.MasterClient);
+            Debug.Log("Nesne býrakýldý ve MasterClient'a devredildi: " + heldObject.name);
+        }
+
         photonView.RPC("RPC_DropObject", RpcTarget.All, heldObjectPhotonView.ViewID);
     }
+
 
     [PunRPC]
     void RPC_DropObject(int objectViewID)
@@ -107,10 +132,12 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         // Sahipliði serbest býrak
         if (droppedObject.GetComponent<PhotonView>().IsMine)
         {
-            droppedObject.GetComponent<PhotonView>().TransferOwnership(0); // Sahipliði serbest býrak
+            droppedObject.GetComponent<PhotonView>().TransferOwnership(0); // Sahipsiz yap
         }
 
+        // heldObject'i null yap ve senkronize et
         heldObject = null;
+        Debug.Log("Nesne býrakýldý: " + droppedObject.name);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
