@@ -3,18 +3,19 @@ using UnityEngine;
 
 public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public float interactionDistance = 3f;  // Etkileþim mesafesi
-    public Transform holdPosition;  // Oyuncunun el pozisyonu
-    private GameObject heldObject = null;  // Þu anda tutulan nesne
-    private Rigidbody heldRigidbody;  // Tutulan nesnenin Rigidbody bileþeni
-    private PhotonView heldObjectPhotonView;  // Nesnenin PhotonView bileþeni
+    public float interactionDistance = 3f;
+    public Transform holdPosition;
+    public string leftPositionTag = "LeftPosition"; // Býrakma noktasýnýn etiketi
+    private GameObject heldObject = null;
+    private Rigidbody heldRigidbody;
+    private PhotonView heldObjectPhotonView;
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E) && photonView.IsMine)
         {
             if (heldObject == null) TryPickUp();
-            else DropObject();
+            else TryDropOrPlace();
         }
     }
 
@@ -32,6 +33,23 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
             objectPhotonView.RequestOwnership();
             photonView.RPC("RPC_PickUpObject", RpcTarget.All, objectPhotonView.ViewID);
+        }
+    }
+
+    void TryDropOrPlace()
+    {
+        // "LeftPosition" etiketli bir obje arýyoruz
+        GameObject leftPosition = GameObject.FindGameObjectWithTag(leftPositionTag);
+
+        if (leftPosition != null && Vector3.Distance(transform.position, leftPosition.transform.position) <= interactionDistance)
+        {
+            // LeftPosition'a yerleþtirme iþlemi
+            photonView.RPC("RPC_PlaceOnLeftPosition", RpcTarget.All, heldObjectPhotonView.ViewID, leftPosition.transform.position);
+        }
+        else
+        {
+            // Normal býrakma iþlemi
+            DropObject();
         }
     }
 
@@ -54,10 +72,26 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         heldObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
     }
 
+    [PunRPC]
+    void RPC_PlaceOnLeftPosition(int objectViewID, Vector3 position)
+    {
+        GameObject objectToPlace = PhotonView.Find(objectViewID).gameObject;
+        objectToPlace.transform.SetParent(null);
+        objectToPlace.transform.position = position;
+        objectToPlace.transform.rotation = Quaternion.identity;
+
+        Rigidbody rb = objectToPlace.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true; // Sabit konumda kalmasý için
+        }
+
+        heldObject = null;
+    }
+
     void DropObject()
     {
         if (heldObject == null) return;
-
         photonView.RPC("RPC_DropObject", RpcTarget.All, heldObjectPhotonView.ViewID);
     }
 
