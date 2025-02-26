@@ -54,6 +54,8 @@ MonoBehaviour:
   - RPC_SetBurnt
   - RPC_PlaceItem
   - RPC_TakeItem
+  - RPC_Sit
+  - RPC_StandUp
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

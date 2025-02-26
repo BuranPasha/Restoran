@@ -158,6 +158,7 @@ MonoBehaviour:
   pan: {fileID: 791845423}
   cookingTime: 30
   burningTime: 50
+  interactionDistance: 3
 --- !u!65 &65329282
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1186,7 +1187,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 1
+  OwnershipTransfer: 2
   observableSearch: 2
   ObservedComponents:
   - {fileID: 826956126}
@@ -1500,7 +1501,8 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 1
   observableSearch: 2
-  ObservedComponents: []
+  ObservedComponents:
+  - {fileID: 896233652}
   sceneViewId: 4
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -2128,7 +2130,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 1
+  OwnershipTransfer: 2
   observableSearch: 2
   ObservedComponents:
   - {fileID: 1623223299}
@@ -2249,7 +2251,7 @@ MonoBehaviour:
   Group: 0
   prefixField: -1
   Synchronization: 3
-  OwnershipTransfer: 1
+  OwnershipTransfer: 2
   observableSearch: 2
   ObservedComponents:
   - {fileID: 1681467788}

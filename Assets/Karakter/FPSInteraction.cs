@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public float interactionDistance = 3f;  // Etkileþim mesafesi
-    public Transform holdPosition;  // Oyuncunun el pozisyonu
+    public float interactionDistance = 3f;
+    public Transform holdPosition;
     public string leftPositionTag = "LeftPosition"; // Býrakma noktasýnýn etiketi
-    private GameObject heldObject = null;  // Þu anda tutulan nesne
-    private Rigidbody heldRigidbody;  // Tutulan nesnenin Rigidbody bileþeni
-    private PhotonView heldObjectPhotonView;  // Nesnenin PhotonView bileþeni
+    private GameObject heldObject = null;
+    private Rigidbody heldRigidbody;
+    private PhotonView heldObjectPhotonView;
 
     void Update()
     {
@@ -23,38 +23,27 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out hit, interactionDistance) && hit.collider.CompareTag("Pickable"))
+        if (Physics.Raycast(ray, out hit, interactionDistance))
         {
             GameObject objectToPickUp = hit.collider.gameObject;
             PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
-
-            // Eðer item zaten bir oyuncunun elindeyse, baþka bir oyuncu alamaz
-            if (objectPhotonView.Owner != null && !objectPhotonView.IsMine)
+            if (objectPhotonView != null)
             {
-                Debug.Log("Bu item zaten baþka bir oyuncunun elinde!");
-                return;
+                objectPhotonView.RequestOwnership();
+                photonView.RPC("RPC_PickUpObject", RpcTarget.All, objectPhotonView.ViewID);
             }
-
-            // Sahipliði talep et
-            objectPhotonView.RequestOwnership();
-            photonView.RPC("RPC_PickUpObject", RpcTarget.All, objectPhotonView.ViewID);
         }
     }
 
     void TryDropOrPlace()
     {
-        // "LeftPosition" etiketli bir obje arýyoruz
         GameObject leftPosition = GameObject.FindGameObjectWithTag(leftPositionTag);
-
         if (leftPosition != null && Vector3.Distance(transform.position, leftPosition.transform.position) <= interactionDistance)
         {
-            // LeftPosition'a yerleþtirme iþlemi
             photonView.RPC("RPC_PlaceOnLeftPosition", RpcTarget.All, heldObjectPhotonView.ViewID, leftPosition.transform.position);
         }
         else
         {
-            // Normal býrakma iþlemi
             DropObject();
         }
     }
@@ -92,22 +81,12 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
             rb.isKinematic = true; // Sabit konumda kalmasý için
         }
 
-        // Sahipliði tamamen sýfýrla
-        PhotonView itemPhotonView = objectToPlace.GetComponent<PhotonView>();
-        if (itemPhotonView != null)
-        {
-            itemPhotonView.TransferOwnership(0); // Sahipliði tamamen sýfýrla
-        }
-
         heldObject = null;
     }
 
     void DropObject()
     {
         if (heldObject == null) return;
-
-        // Sahipliði tamamen sýfýrla
-        heldObjectPhotonView.TransferOwnership(0); // 0, sahipliði serbest býrakýr
         photonView.RPC("RPC_DropObject", RpcTarget.All, heldObjectPhotonView.ViewID);
     }
 
@@ -125,11 +104,10 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
         droppedObject.transform.SetParent(null);
 
-        // Sahipliði tamamen sýfýrla
-        PhotonView droppedPhotonView = droppedObject.GetComponent<PhotonView>();
-        if (droppedPhotonView != null)
+        // Sahipliði serbest býrak
+        if (droppedObject.GetComponent<PhotonView>().IsMine)
         {
-            droppedPhotonView.TransferOwnership(0); // Sahipliði tamamen sýfýrla
+            droppedObject.GetComponent<PhotonView>().TransferOwnership(0); // Sahipliði serbest býrak
         }
 
         heldObject = null;

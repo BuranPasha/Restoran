@@ -380,7 +380,7 @@ MonoBehaviour:
   speed: 5
   sprintSpeed: 8
   crouchSpeed: 3
-  jumpHeight: 2
+  jumpHeight: 1.5
   gravity: -9.81
   lookSpeed: 2
   isSitting: 0
