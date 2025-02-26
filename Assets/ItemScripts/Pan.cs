@@ -8,16 +8,36 @@ public class Pan : MonoBehaviourPunCallbacks, IPunObservable
 
     public void PlaceItem(GameObject item)
     {
-        itemOnPan = item;
-        item.SetActive(true);  // Et tavada görünür hale gelir
-        item.transform.position = transform.position;  // Et tavaya yerleþir
+        if (itemOnPan == null && item != null)
+        {
+            itemOnPan = item;
+            item.SetActive(true);  // Et tavada görünür hale gelir
+            item.transform.position = transform.position;  // Et tavaya yerleþir
+
+            // Sahipliði tamamen sýfýrla
+            PhotonView itemPhotonView = item.GetComponent<PhotonView>();
+            if (itemPhotonView != null)
+            {
+                itemPhotonView.TransferOwnership(0); // Sahipliði tamamen sýfýrla
+            }
+        }
     }
 
     public GameObject TakeItem()
     {
-        GameObject item = itemOnPan;
-        itemOnPan = null;
-        return item;
+        if (itemOnPan != null)
+        {
+            PhotonView itemPhotonView = itemOnPan.GetComponent<PhotonView>();
+            if (itemPhotonView != null && itemPhotonView.IsMine)
+            {
+                // Sahipliði alan oyuncuya transfer et
+                itemPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+                GameObject item = itemOnPan;
+                itemOnPan = null;
+                return item;
+            }
+        }
+        return null;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

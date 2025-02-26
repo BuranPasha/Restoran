@@ -52,6 +52,8 @@ MonoBehaviour:
   - RPC_ToggleStove
   - RPC_PlaceOnLeftPosition
   - RPC_SetBurnt
+  - RPC_PlaceItem
+  - RPC_TakeItem
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

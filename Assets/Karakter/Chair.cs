@@ -10,7 +10,7 @@ public class Chair : MonoBehaviour
     {
         if (!gameObject.CompareTag("Chair"))
         {
-            Debug.LogError("Oturulmaya çalýþýlan obje 'Chair' tag'ine sahip deðil!");
+            
             return;
         }
 
@@ -26,7 +26,7 @@ public class Chair : MonoBehaviour
 
     void Sit(PlayerMovement player)
     {
-        Debug.Log(player.gameObject.name + " sandalyeye oturdu.");
+        
         sittingPlayer = player;
 
         player.characterController.enabled = false; // Hareketi kapat
@@ -39,7 +39,7 @@ public class Chair : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("Chair objesinde sitPoint atanmadý! Lütfen bir oturma noktasý (SitPosition) ekleyin.");
+            
         }
 
         player.isSitting = true;
@@ -49,7 +49,7 @@ public class Chair : MonoBehaviour
     {
         if (sittingPlayer != null)
         {
-            Debug.Log(sittingPlayer.gameObject.name + " sandalyeden kalktý.");
+            
             sittingPlayer.characterController.enabled = true; // Hareketi aç
 
             sittingPlayer.isSitting = false;
