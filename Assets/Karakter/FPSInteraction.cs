@@ -108,6 +108,13 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         droppedObject.transform.SetParent(null);
+
+        // Sahipliði sýfýrlama
+        if (droppedObject.GetComponent<PhotonView>().IsMine)
+        {
+            droppedObject.GetComponent<PhotonView>().TransferOwnership(PhotonNetwork.MasterClient);
+        }
+
         heldObject = null;
     }
 
