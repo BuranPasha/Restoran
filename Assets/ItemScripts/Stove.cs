@@ -1,18 +1,22 @@
 using Photon.Pun;
 using UnityEngine;
-using static UnityEditor.Progress;
 
 public class Stove : MonoBehaviourPunCallbacks, IPunObservable
 {
     public bool isOn = false;  // Ocak açýk mý kapalý mý?
     public GameObject fireEffect;  // Ocak açýkken gösterilecek ateþ efekti
-    public Pan pan;  // Tava referansý (tavayý ocaða yerleþtirmek için)
-    public float cookingTime = 10f;  // Piþirme süresi
+    public Light stoveLight;  // Ocak açýkken yanacak ýþýk (opsiyonel)
+    public Pan pan;  // Tava referansý
+    public float cookingTime = 10f;  // Piþirme süresi (saniye)
+    public float burningTime = 15f;  // Yanma süresi (saniye)
     private float currentCookingTime = 0f;  // Geçen piþirme süresi
     private bool isCooking = false;  // Piþirme iþlemi devam ediyor mu?
 
     void Update()
     {
+        // PhotonView null ise iþlem yapma
+        if (photonView == null) return;
+
         // Sadece ocaðýn sahibi ocaðý açýp kapatabilir
         if (Input.GetKeyDown(KeyCode.F) && photonView.IsMine)
         {
@@ -36,14 +40,8 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
     void RPC_ToggleStove(bool stoveState)
     {
         isOn = stoveState;
-        fireEffect.SetActive(isOn);  // Ateþ efekti açýk/kapalý durumuna göre güncellenir
-
-        if (!isOn)
-        {
-            // Ocak kapatýldýðýnda piþirme süresini sýfýrla
-            currentCookingTime = 0f;
-            isCooking = false;
-        }
+        if (fireEffect != null) fireEffect.SetActive(isOn);  // Ateþ efekti açýk/kapalý durumuna göre güncellenir
+        if (stoveLight != null) stoveLight.enabled = isOn;  // Iþýk açýk/kapalý durumuna göre güncellenir
     }
 
     void CookItem()
@@ -56,11 +54,16 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
 
         currentCookingTime += Time.deltaTime;
 
-        if (currentCookingTime >= cookingTime)
+        if (currentCookingTime >= cookingTime && currentCookingTime < burningTime)
         {
             // Piþirme tamamlandý
             pan.itemOnPan.GetComponent<Item>().SetCooked();
-            isCooking = false;
+        }
+        else if (currentCookingTime >= burningTime)
+        {
+            // Yanma durumu
+            pan.itemOnPan.GetComponent<Item>().SetBurnt();
+            isCooking = false;  // Piþirme iþlemi durdurulur
         }
     }
 
@@ -68,16 +71,15 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (stream.IsWriting)
         {
-            // Ocak durumunu senkronize et
             stream.SendNext(isOn);
             stream.SendNext(currentCookingTime);
         }
         else
         {
-            // Ocak durumunu güncelle
             isOn = (bool)stream.ReceiveNext();
             currentCookingTime = (float)stream.ReceiveNext();
-            fireEffect.SetActive(isOn);  // Ateþ efekti güncellenir
+            if (fireEffect != null) fireEffect.SetActive(isOn);  // Ateþ efekti güncellenir
+            if (stoveLight != null) stoveLight.enabled = isOn;  // Iþýk güncellenir
         }
     }
 }

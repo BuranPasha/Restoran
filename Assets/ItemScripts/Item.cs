@@ -9,19 +9,39 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     // Piþirme durumunu güncelleyen metod
     public void SetCooked()
     {
-        currentState = MeatState.Cooked;
-        photonView.RPC("RPC_SetCooked", RpcTarget.All);
+        if (currentState != MeatState.Cooked)
+        {
+            currentState = MeatState.Cooked;
+            photonView.RPC("RPC_SetCooked", RpcTarget.All);
+        }
     }
 
-    // Piþirme durumunu tüm oyunculara senkronize eden RPC metodu
+    // Yanma durumunu güncelleyen metod
+    public void SetBurnt()
+    {
+        if (currentState != MeatState.Burnt)
+        {
+            currentState = MeatState.Burnt;
+            photonView.RPC("RPC_SetBurnt", RpcTarget.All);
+        }
+    }
+
     [PunRPC]
     void RPC_SetCooked()
     {
         currentState = MeatState.Cooked;
+        Debug.Log("Et piþti!");
         // Görsel olarak piþmiþ durumu güncelle (örneðin, materyal deðiþtir)
     }
 
-    // Photon senkronizasyonu için gerekli metod
+    [PunRPC]
+    void RPC_SetBurnt()
+    {
+        currentState = MeatState.Burnt;
+        Debug.Log("Et yandý!");
+        // Görsel olarak yanmýþ durumu güncelle (örneðin, materyal deðiþtir)
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
