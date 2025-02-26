@@ -6,8 +6,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     public float interactionDistance = 3f;  // Etkileþim mesafesi
     public Transform holdPosition;  // Oyuncunun el pozisyonu
     private GameObject heldObject = null;  // Þu anda tutulan nesne
-    private Vector3 originalScale;  // Itemin orijinal scale'ini saklamak için bir deðiþken
-    private bool isItemHeld = false;  // Item tutma durumu (local oyuncu için)
     private Rigidbody heldRigidbody;  // Tutulan nesnenin Rigidbody bileþeni
     private PhotonView heldObjectPhotonView;  // Nesnenin PhotonView bileþeni
 
@@ -15,14 +13,8 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (Input.GetKeyDown(KeyCode.E) && photonView.IsMine)
         {
-            if (heldObject == null)
-            {
-                TryPickUp();
-            }
-            else
-            {
-                DropObject();
-            }
+            if (heldObject == null) TryPickUp();
+            else DropObject();
         }
     }
 
@@ -31,78 +23,73 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hit, interactionDistance))
+        if (Physics.Raycast(ray, out hit, interactionDistance) && hit.collider.CompareTag("Pickable"))
         {
-            if (hit.collider.CompareTag("Pickable"))
-            {
-                GameObject objectToPickUp = hit.collider.gameObject;
-                PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
+            GameObject objectToPickUp = hit.collider.gameObject;
+            PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
 
-                // Eðer nesne baþka bir oyuncu tarafýndan alýndýysa iþlem yapma
-                if (objectPhotonView.Owner != null && !objectPhotonView.IsMine)
-                {
-                    return; // Baþka biri tutuyorsa itemi alamayýz.
-                }
+            if (objectPhotonView.Owner != null && !objectPhotonView.IsMine) return;
 
-                // Sahipliði al ve itemi tut
-                objectPhotonView.RequestOwnership();
-                heldObject = objectToPickUp;
-                heldObjectPhotonView = objectPhotonView;
-                heldRigidbody = heldObject.GetComponent<Rigidbody>();
-                originalScale = heldObject.transform.localScale;
-
-                PickUpObject(heldObject);
-            }
+            objectPhotonView.RequestOwnership();
+            photonView.RPC("RPC_PickUpObject", RpcTarget.All, objectPhotonView.ViewID);
         }
     }
 
-    void PickUpObject(GameObject objectToPickUp)
+    [PunRPC]
+    void RPC_PickUpObject(int objectViewID)
     {
+        GameObject objectToPickUp = PhotonView.Find(objectViewID).gameObject;
+        heldObject = objectToPickUp;
+        heldObjectPhotonView = heldObject.GetComponent<PhotonView>();
+        heldRigidbody = heldObject.GetComponent<Rigidbody>();
+
         if (heldRigidbody != null)
         {
             heldRigidbody.isKinematic = true;
             heldRigidbody.useGravity = false;
-            heldRigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         }
 
-        objectToPickUp.transform.SetParent(holdPosition);
-        objectToPickUp.transform.localPosition = Vector3.zero;
-        objectToPickUp.transform.localRotation = Quaternion.Euler(0, 90, 0);
-        objectToPickUp.transform.localScale = originalScale;
-
-        isItemHeld = true;
+        heldObject.transform.SetParent(holdPosition);
+        heldObject.transform.localPosition = Vector3.zero;
+        heldObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
     }
 
     void DropObject()
     {
-        if (heldRigidbody != null)
+        if (heldObject == null) return;
+
+        photonView.RPC("RPC_DropObject", RpcTarget.All, heldObjectPhotonView.ViewID);
+    }
+
+    [PunRPC]
+    void RPC_DropObject(int objectViewID)
+    {
+        GameObject droppedObject = PhotonView.Find(objectViewID).gameObject;
+        Rigidbody droppedRigidbody = droppedObject.GetComponent<Rigidbody>();
+
+        if (droppedRigidbody != null)
         {
-            heldRigidbody.isKinematic = false;
-            heldRigidbody.useGravity = true;
-            heldRigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
+            droppedRigidbody.isKinematic = false;
+            droppedRigidbody.useGravity = true;
         }
 
-        heldObject.transform.SetParent(null);
+        droppedObject.transform.SetParent(null);
         heldObject = null;
-        isItemHeld = false;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(isItemHeld);
             stream.SendNext(heldObject != null ? heldObject.transform.position : Vector3.zero);
             stream.SendNext(heldObject != null ? heldObject.transform.rotation : Quaternion.identity);
         }
         else
         {
-            isItemHeld = (bool)stream.ReceiveNext();
-            Vector3 receivedPosition = (Vector3)stream.ReceiveNext();
-            Quaternion receivedRotation = (Quaternion)stream.ReceiveNext();
-
             if (heldObject != null)
             {
+                Vector3 receivedPosition = (Vector3)stream.ReceiveNext();
+                Quaternion receivedRotation = (Quaternion)stream.ReceiveNext();
                 heldObject.transform.position = receivedPosition;
                 heldObject.transform.rotation = receivedRotation;
             }

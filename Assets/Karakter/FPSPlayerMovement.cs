@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviourPunCallbacks
 {
     public CharacterController characterController;
     public Camera playerCamera;
@@ -20,24 +20,21 @@ public class PlayerMovement : MonoBehaviour
     private float originalHeight;
     private float crouchHeight = 0.5f;
 
-    private PhotonView photonView;
+    private new PhotonView photonView;
     private float verticalRotation = 0f;
 
-    // Sandalyeye oturma ve kalkma iþlemi için deðiþkenler
-    private bool isSitting = false;
-    private Transform chairPosition;  // Sandalyenin oturma pozisyonu
-    private Vector3 originalPosition; // Sandalyeden kalkarken orijinal pozisyon
-    private Quaternion originalRotation; // Sandalyeden kalkarken orijinal rotasyon
-    private float originalCameraHeight; // Kameranýn orijinal yüksekliði
+    public bool isSitting = false;
 
     void Start()
     {
         photonView = GetComponent<PhotonView>();
         characterController = GetComponent<CharacterController>();
+
         if (characterController == null)
         {
             Debug.LogError("CharacterController component is missing!");
         }
+
         currentSpeed = speed;
         originalHeight = characterController.height;
 
@@ -46,26 +43,38 @@ public class PlayerMovement : MonoBehaviour
             playerCamera.gameObject.SetActive(false);
         }
 
-        // Sandalyenin oturma noktasý (Trigger olarak iþaretlendiðinden emin olun)
-        chairPosition = transform.Find("SitPoint");  // "SitPoint" objesini doðru olarak yerleþtirin
-        if (chairPosition == null)
-        {
-            Debug.LogError("SitPoint not found. Make sure it is attached to the chair.");
-        }
+        // Baþlangýçta fareyi gizle ve kilitle
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()
     {
         if (!photonView.IsMine || characterController == null) return;
 
-        // Sandalyede deðilken normal hareketi kontrol et
+        // Sandalyeye oturulmuþsa hareketi engelle, kamera hareketi serbest olsun
         if (!isSitting)
         {
             Move();
             ApplyGravity();
-            LookAround();
             HandleCrouch();
             Jump();
+        }
+
+        // Kamera kontrolü her zaman aktif olsun
+        LookAround();
+
+        // Sandalyeye oturma ve kalkma iþlemi
+        if (Input.GetKeyDown(KeyCode.E) && photonView.IsMine)
+        {
+            if (isSitting)
+            {
+                StandUpFromChair();
+            }
+            else
+            {
+                TrySitOnChair();
+            }
         }
     }
 
@@ -74,12 +83,10 @@ public class PlayerMovement : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        // Kamera yönüne göre hareket
         Vector3 moveDirection = playerCamera.transform.forward * verticalInput + playerCamera.transform.right * horizontalInput;
         moveDirection.y = 0;
         moveDirection.Normalize();
 
-        // Sprint kontrolü
         if (Input.GetKey(KeyCode.LeftShift) && !isCrouching)
         {
             currentSpeed = sprintSpeed;
@@ -94,9 +101,6 @@ public class PlayerMovement : MonoBehaviour
         }
 
         characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
-
-        // Diðer oyuncularýn hareketini senkronize et
-        photonView.RPC("SyncMovement", RpcTarget.Others, transform.position, transform.rotation);
     }
 
     void Jump()
@@ -104,7 +108,6 @@ public class PlayerMovement : MonoBehaviour
         if (characterController.isGrounded && Input.GetKeyDown(KeyCode.Space))
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            photonView.RPC("SyncJump", RpcTarget.Others, velocity.y);  // Zýplama hýzýný diðer oyunculara ilet
         }
     }
 
@@ -138,12 +141,10 @@ public class PlayerMovement : MonoBehaviour
             if (!isCrouching)
             {
                 Crouch();
-                photonView.RPC("SyncCrouch", RpcTarget.Others, true);  // Diðer oyunculara crouch durumu gönder
             }
             else
             {
                 StandUp();
-                photonView.RPC("SyncCrouch", RpcTarget.Others, false);  // Diðer oyunculara stand-up durumu gönder
             }
         }
     }
@@ -164,105 +165,59 @@ public class PlayerMovement : MonoBehaviour
         playerCamera.transform.localPosition = new Vector3(0, originalHeight / 2, 0);
     }
 
-    // OnTriggerEnter ile sandalyeye otur
-    private void OnTriggerEnter(Collider other)
+    void TrySitOnChair()
     {
-        if (other.CompareTag("Chair") && !isSitting)  // Sandalyenin üzerine girdiðinde
+        if (!isSitting)
         {
-            SitOnChair();  // Sandalyeye otur
+            RaycastHit hit;
+            if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, 3f)) // MESAFEYÝ 3F YAPTIK
+            {
+                Chair chair = hit.collider.GetComponent<Chair>();
+                if (chair != null && chair.sitPoint != null)
+                {
+                    Debug.Log("Player is sitting on the chair.");
+                    photonView.RPC("SyncSit", RpcTarget.All, chair.sitPoint.position, chair.sitPoint.rotation);
+                }
+                else
+                {
+                    Debug.Log("Sandalyeye oturulamýyor. Chair scripti yok veya sitPoint atanmadý.");
+                }
+            }
+            else
+            {
+                Debug.Log("Raycast sandalyeyi görmüyor.");
+            }
         }
     }
 
-    // OnTriggerExit ile sandalyeden kalk
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Chair") && isSitting)  // Sandalyeden çýktýðýnda
-        {
-            StandUpFromChair();  // Sandalyeden kalk
-        }
-    }
-
-    // Sandalyeye oturmak için metod
-    void SitOnChair()
-    {
-        isSitting = true;
-
-        // Oturulacak pozisyonu ayarla
-        originalPosition = transform.position;
-        originalRotation = transform.rotation;
-        originalCameraHeight = playerCamera.transform.localPosition.y;
-
-        // Karakteri sandalyeye oturacak þekilde yerleþtir
-        transform.position = chairPosition.position;
-        transform.rotation = chairPosition.rotation;
-
-        // Kamerayý sandalyeye uygun þekilde yerleþtir
-        playerCamera.transform.localPosition = new Vector3(0, chairPosition.position.y, 0);
-
-        // Karakterin hareketini geçici olarak devre dýþý býrak
-        characterController.enabled = false;
-
-        photonView.RPC("SyncSit", RpcTarget.Others, true);
-    }
-
-    // Sandalyeden kalkmak için metod
     void StandUpFromChair()
     {
+        Debug.Log("Player has stood up from the chair.");
+        photonView.RPC("SyncStandUp", RpcTarget.All);
+    }
+
+    [PunRPC]
+    void SyncSit(Vector3 sitPosition, Quaternion sitRotation)
+    {
+        isSitting = true;
+        characterController.enabled = false; // Hareketi engelle
+
+        transform.position = sitPosition;
+        transform.rotation = sitRotation;
+
+        // Fareyi her zaman gizle ve kilitle
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    [PunRPC]
+    void SyncStandUp()
+    {
         isSitting = false;
+        characterController.enabled = true; // Hareketi aç
 
-        // Karakteri eski pozisyona geri getir
-        transform.position = originalPosition;
-        transform.rotation = originalRotation;
-
-        // Kamerayý eski yüksekliðine geri getir
-        playerCamera.transform.localPosition = new Vector3(0, originalCameraHeight, 0);
-
-        // Karakteri hareket ettirmek için characterController'ý tekrar etkinleþtir
-        characterController.enabled = true;
-
-        photonView.RPC("SyncSit", RpcTarget.Others, false);
-    }
-
-    // Diðer oyunculara senkronize edilen hareket bilgilerini gönder
-    [PunRPC]
-    void SyncMovement(Vector3 position, Quaternion rotation)
-    {
-        transform.position = position;
-        transform.rotation = rotation;
-    }
-
-    // Zýplama senkronizasyonu için RPC
-    [PunRPC]
-    void SyncJump(float jumpVelocity)
-    {
-        velocity.y = jumpVelocity;
-    }
-
-    // Crouch senkronizasyonu için RPC
-    [PunRPC]
-    void SyncCrouch(bool crouching)
-    {
-        if (crouching)
-        {
-            Crouch();
-        }
-        else
-        {
-            StandUp();
-        }
-    }
-
-    // Sandalyeye oturma durumu için senkronizasyon
-    [PunRPC]
-    void SyncSit(bool sitting)
-    {
-        if (sitting)
-        {
-            SitOnChair();
-        }
-        else
-        {
-            StandUpFromChair();
-        }
+        // Fareyi her zaman gizle ve kilitle
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }

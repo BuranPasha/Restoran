@@ -45,6 +45,9 @@ MonoBehaviour:
   - Sit
   - StandUp
   - SyncSit
+  - RPC_DropObject
+  - RPC_PickUpObject
+  - SyncStandUp
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
