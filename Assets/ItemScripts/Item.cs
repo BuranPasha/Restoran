@@ -6,32 +6,32 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     public enum MeatState { Raw, Cooked, Burnt }
     public MeatState currentState = MeatState.Raw;
 
-    public GameObject rawModel;    // Çið et modeli
-    public GameObject cookedModel; // Piþmiþ et modeli
-    public GameObject burntModel;  // Yanmýþ et modeli
+    public GameObject rawModel;
+    public GameObject cookedModel;
+    public GameObject burntModel;
 
     void Start()
     {
-        UpdateModel(); // Baþlangýçta modeli güncelle
+        UpdateModel();
     }
 
-    // Piþirme durumunu güncelleyen metod
     public void SetCooked()
     {
         if (currentState != MeatState.Cooked)
         {
             currentState = MeatState.Cooked;
-            photonView.RPC("RPC_SetCooked", RpcTarget.All);
+            UpdateModel();
+            photonView.RPC("RPC_SetCooked", RpcTarget.AllBuffered);
         }
     }
 
-    // Yanma durumunu güncelleyen metod
     public void SetBurnt()
     {
         if (currentState != MeatState.Burnt)
         {
             currentState = MeatState.Burnt;
-            photonView.RPC("RPC_SetBurnt", RpcTarget.All);
+            UpdateModel();
+            photonView.RPC("RPC_SetBurnt", RpcTarget.AllBuffered);
         }
     }
 
@@ -39,37 +39,37 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     void RPC_SetCooked()
     {
         currentState = MeatState.Cooked;
-        UpdateModel(); // Modeli güncelle
-        Debug.Log("Et piþti!");
+        UpdateModel();
     }
 
     [PunRPC]
     void RPC_SetBurnt()
     {
         currentState = MeatState.Burnt;
-        UpdateModel(); // Modeli güncelle
-        Debug.Log("Et yandý!");
+        UpdateModel();
     }
 
-    // Modeli güncelleyen metod
     void UpdateModel()
     {
-        // Tüm modelleri gizle
-        if (rawModel != null) rawModel.SetActive(false);
-        if (cookedModel != null) cookedModel.SetActive(false);
-        if (burntModel != null) burntModel.SetActive(false);
+        Debug.Log($"Model Güncelleniyor: {currentState}");
 
-        // Duruma göre ilgili modeli göster
+        rawModel?.SetActive(false);
+        cookedModel?.SetActive(false);
+        burntModel?.SetActive(false);
+
         switch (currentState)
         {
             case MeatState.Raw:
-                if (rawModel != null) rawModel.SetActive(true);
+                rawModel?.SetActive(true);
+                Debug.Log("Raw model aktif!");
                 break;
             case MeatState.Cooked:
-                if (cookedModel != null) cookedModel.SetActive(true);
+                cookedModel?.SetActive(true);
+                Debug.Log("Cooked model aktif!");
                 break;
             case MeatState.Burnt:
-                if (burntModel != null) burntModel.SetActive(true);
+                burntModel?.SetActive(true);
+                Debug.Log("Burnt model aktif!");
                 break;
         }
     }
@@ -82,8 +82,12 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
         }
         else
         {
-            currentState = (MeatState)stream.ReceiveNext();
-            UpdateModel(); // Modeli güncelle
+            MeatState receivedState = (MeatState)stream.ReceiveNext();
+            if (currentState != receivedState)
+            {
+                currentState = receivedState;
+                UpdateModel();
+            }
         }
     }
 }

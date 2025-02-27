@@ -3,22 +3,21 @@ using UnityEngine;
 
 public class Pan : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public GameObject itemOnPan;  // Tavada piþen eþya
-    public Stove stove;  // Ocak referansý
+    public GameObject itemOnPan;
+    public Stove stove;
 
     public void PlaceItem(GameObject item)
     {
         if (itemOnPan == null && item != null)
         {
             itemOnPan = item;
-            item.SetActive(true);  // Et tavada görünür hale gelir
-            item.transform.position = transform.position;  // Et tavaya yerleþir
+            item.transform.position = transform.position;
+            item.SetActive(true);
 
-            // Sahipliði tamamen sýfýrla
             PhotonView itemPhotonView = item.GetComponent<PhotonView>();
             if (itemPhotonView != null)
             {
-                itemPhotonView.TransferOwnership(0); // Sahipliði tamamen sýfýrla
+                itemPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
         }
     }
@@ -30,7 +29,6 @@ public class Pan : MonoBehaviourPunCallbacks, IPunObservable
             PhotonView itemPhotonView = itemOnPan.GetComponent<PhotonView>();
             if (itemPhotonView != null && itemPhotonView.IsMine)
             {
-                // Sahipliði alan oyuncuya transfer et
                 itemPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
                 GameObject item = itemOnPan;
                 itemOnPan = null;
