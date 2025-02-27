@@ -93,6 +93,13 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         heldObject.transform.SetParent(holdPosition);
         heldObject.transform.localPosition = Vector3.zero;
         heldObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
+
+        // Item piþirme durumunu duraklat
+        Item itemComponent = heldObject.GetComponent<Item>();
+        if (itemComponent != null)
+        {
+            itemComponent.PauseCooking();
+        }
     }
 
     [PunRPC]
@@ -108,6 +115,13 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         {
             rb.isKinematic = true; // Sabit konumda kalmasý için
             rb.freezeRotation = true; // Dönmeyi engelle
+        }
+
+        // Item piþirme durumunu yeniden aktive et
+        Item itemComponent = objectToPlace.GetComponent<Item>();
+        if (itemComponent != null)
+        {
+            itemComponent.ResumeCooking();
         }
 
         heldObject = null;
