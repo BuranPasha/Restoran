@@ -11,14 +11,24 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     public Material cookedMaterial;
     public Material burntMaterial;
 
+    // Item dondurulmuþsa, state artýk güncellenmez.
+    private bool isFrozen = false;
+
     void Start()
     {
         UpdateMaterial();
     }
 
+    // Itemin durumunu dondurur.
+    public void FreezeState()
+    {
+        isFrozen = true;
+        Debug.Log("Item state frozen. Bundan sonra piþirme durumu deðiþmeyecek.");
+    }
+
     public void SetCooked()
     {
-        // Eðer zaten Cooked veya Burnt ise piþirme!
+        if (isFrozen) return; // Durum dondurulmuþsa state deðiþmez.
         if (currentState != MeatState.Raw) return;
 
         currentState = MeatState.Cooked;
@@ -28,7 +38,8 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
 
     public void SetBurnt()
     {
-        if (currentState == MeatState.Burnt) return; // Zaten yanmýþsa tekrar çaðýrma!
+        if (isFrozen) return;
+        if (currentState == MeatState.Burnt) return;
 
         currentState = MeatState.Burnt;
         UpdateMaterial();
@@ -38,6 +49,7 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void RPC_SetCooked()
     {
+        if (isFrozen) return;
         currentState = MeatState.Cooked;
         UpdateMaterial();
     }
@@ -45,6 +57,7 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void RPC_SetBurnt()
     {
+        if (isFrozen) return;
         currentState = MeatState.Burnt;
         UpdateMaterial();
     }
@@ -77,15 +90,21 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(currentState);
+            stream.SendNext(isFrozen);
         }
         else
         {
             MeatState receivedState = (MeatState)stream.ReceiveNext();
-            if (currentState != receivedState)
+            bool receivedFrozen = (bool)stream.ReceiveNext();
+
+            // Eðer item dondurulmuþsa, gelen güncellemeyi yoksayalým.
+            if (!isFrozen)
             {
                 currentState = receivedState;
                 UpdateMaterial();
             }
+            // Diðer istemcilerle freeze bilgisini de senkronize edelim.
+            isFrozen = receivedFrozen;
         }
     }
 }

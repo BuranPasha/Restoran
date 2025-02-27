@@ -29,16 +29,17 @@ public class Pan : MonoBehaviourPunCallbacks, IPunObservable
             PhotonView itemPhotonView = itemOnPan.GetComponent<PhotonView>();
             if (itemPhotonView != null && itemPhotonView.IsMine)
             {
-                itemPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
                 GameObject item = itemOnPan;
                 itemOnPan = null;
 
-                // ?? Ocaða bildiriyoruz ki tava artýk boþ!
-                if (stove != null)
+                // Item tavadan alýndýðýnda, state'ini donduralým.
+                Item itemComponent = item.GetComponent<Item>();
+                if (itemComponent != null)
                 {
-                    stove.ResetCooking();
+                    itemComponent.FreezeState();
                 }
 
+                // Ocak tarafýndaki piþirme iþlemi artýk bu item ile iliþkilendirilmediði için reset'e gerek yok.
                 return item;
             }
         }
