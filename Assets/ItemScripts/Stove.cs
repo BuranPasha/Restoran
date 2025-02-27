@@ -21,9 +21,19 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
             ToggleStove();
         }
 
-        if (isOn && pan != null && pan.itemOnPan != null)
+        if (!isOn) return;
+        if (pan == null) return;
+
+        // Eðer pan üzerinde et varsa piþirme çalýþýyor.
+        if (pan.itemOnPan != null)
         {
             CookItem();
+        }
+        else
+        {
+            // Et alýndýysa timer’ý resetleyelim.
+            isCooking = false;
+            currentCookingTime = 0f;
         }
     }
 
@@ -38,7 +48,8 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
     {
         isOn = stoveState;
         fireEffect?.SetActive(isOn);
-        if (stoveLight != null) stoveLight.enabled = isOn;
+        if (stoveLight != null)
+            stoveLight.enabled = isOn;
     }
 
     void CookItem()
@@ -46,6 +57,7 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
         if (!isCooking)
         {
             isCooking = true;
+            // Yeni piþirilen etlerde timer sýfýrdan baþlasýn.
             currentCookingTime = 0f;
         }
 
@@ -54,13 +66,14 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
         Item item = pan.itemOnPan?.GetComponent<Item>();
         if (item == null) return;
 
-        // Eger et yanmýþsa, piþirmeyi durdur.
         if (item.currentState == Item.MeatState.Burnt)
         {
-            Debug.Log("Yanmýþ et tekrar piþirilemez!");
+            Debug.Log("Stove: Et zaten yanmýþ, piþirme durdu.");
+            isCooking = false;
             return;
         }
 
+        // Eðer süre piþirme aralýðýndaysa (örneðin 10s'da raw ? cooked geçiþi)
         if (currentCookingTime >= cookingTime && currentCookingTime < burningTime)
         {
             if (item.currentState == Item.MeatState.Raw)
@@ -70,27 +83,22 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (currentCookingTime >= burningTime)
         {
+            // Eðer et pan üzerindeyken uygunsa burnt'a geçsin.
             item.SetBurnt();
             isCooking = false;
         }
     }
 
-    // Item tavadan alýndýðýnda ocaðýn piþirme zamanýný sýfýrlayýp, ocaðý kapatan metot
-    public void ResetCookingAndTurnOff()
+    public void ResetCooking()
     {
-        photonView.RPC("RPC_ResetCookingAndTurnOff", RpcTarget.AllBuffered);
+        photonView.RPC("RPC_ResetCooking", RpcTarget.AllBuffered);
     }
 
     [PunRPC]
-    void RPC_ResetCookingAndTurnOff()
+    void RPC_ResetCooking()
     {
         currentCookingTime = 0f;
         isCooking = false;
-        // Ocaðý kapatalým...
-        isOn = false;
-        fireEffect?.SetActive(isOn);
-        if (stoveLight != null) stoveLight.enabled = isOn;
-        Debug.Log("Ocaðýn piþirme zamaný sýfýrlandý ve ocak kapatýldý!");
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -105,7 +113,8 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
             isOn = (bool)stream.ReceiveNext();
             currentCookingTime = (float)stream.ReceiveNext();
             fireEffect?.SetActive(isOn);
-            if (stoveLight != null) stoveLight.enabled = isOn;
+            if (stoveLight != null)
+                stoveLight.enabled = isOn;
         }
     }
 }
