@@ -12,7 +12,7 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && photonView.IsMine)
+        if (photonView.IsMine && Input.GetKeyDown(KeyCode.E))
         {
             if (heldObject == null) TryPickUp();
             else TryDropOrPlace();
@@ -49,11 +49,9 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
                 objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
-            photonView.RPC("RPC_PickUpObject", RpcTarget.All, objectPhotonView.ViewID);
+            photonView.RPC("RPC_PickUpObject", RpcTarget.All, objectPhotonView.ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
         }
     }
-
-
 
     void TryDropOrPlace()
     {
@@ -70,9 +68,17 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-    void RPC_PickUpObject(int objectViewID)
+    void RPC_PickUpObject(int objectViewID, int ownerActorNumber)
     {
         GameObject objectToPickUp = PhotonView.Find(objectViewID).gameObject;
+        PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
+
+        if (objectPhotonView.OwnerActorNr != ownerActorNumber)
+        {
+            Debug.Log("Bu nesne baþka bir oyuncuya ait: " + objectToPickUp.name);
+            return;
+        }
+
         heldObject = objectToPickUp;
         heldObjectPhotonView = heldObject.GetComponent<PhotonView>();
         heldRigidbody = heldObject.GetComponent<Rigidbody>();
@@ -121,7 +127,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
         photonView.RPC("RPC_DropObject", RpcTarget.All, heldObjectPhotonView.ViewID);
     }
-
 
     [PunRPC]
     void RPC_DropObject(int objectViewID)
