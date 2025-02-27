@@ -14,11 +14,20 @@ public class Pan : MonoBehaviourPunCallbacks, IPunObservable
             item.transform.position = transform.position;
             item.SetActive(true);
 
-            PhotonView itemPhotonView = item.GetComponent<PhotonView>();
-            if (itemPhotonView != null)
+            PhotonView itemPV = item.GetComponent<PhotonView>();
+            if (itemPV != null)
             {
-                itemPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+                itemPV.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
+
+            // Et pan üzerine konulduðunda, peki eðer et çið ise piþirmeye baþlasýn.
+            Item itemComponent = item.GetComponent<Item>();
+            if (itemComponent != null)
+            {
+                itemComponent.ResumeCooking();
+            }
+
+            photonView.RPC("RPC_SetItemOnPan", RpcTarget.AllBuffered, item.GetComponent<PhotonView>().ViewID);
         }
     }
 
@@ -26,41 +35,74 @@ public class Pan : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (itemOnPan != null)
         {
-            PhotonView itemPhotonView = itemOnPan.GetComponent<PhotonView>();
-            if (itemPhotonView != null && itemPhotonView.IsMine)
+            PhotonView itemPV = itemOnPan.GetComponent<PhotonView>();
+            if (itemPV != null && itemPV.IsMine)
             {
                 GameObject item = itemOnPan;
-                itemOnPan = null;
+                // Pan’daki item referansýný að üzerinde temizle.
+                photonView.RPC("RPC_ClearItemOnPan", RpcTarget.AllBuffered);
 
-                // Item tavadan alýndýðýnda, state'ini donduralým.
+                // Et pan’dan alýndýðýnda piþirme duraklasýn.
                 Item itemComponent = item.GetComponent<Item>();
                 if (itemComponent != null)
                 {
-                    itemComponent.FreezeState();
+                    itemComponent.PauseCooking();
                 }
 
-                // Ocak tarafýndaki piþirme iþlemi artýk bu item ile iliþkilendirilmediði için reset'e gerek yok.
+                // Ocak timer’ýný resetleyelim ki et piþirme süreci durdu.
+                if (stove != null)
+                {
+                    stove.ResetCooking();
+                }
+
                 return item;
             }
         }
         return null;
     }
 
+    [PunRPC]
+    void RPC_ClearItemOnPan()
+    {
+        itemOnPan = null;
+    }
+
+    [PunRPC]
+    void RPC_SetItemOnPan(int viewID)
+    {
+        PhotonView pv = PhotonView.Find(viewID);
+        if (pv != null)
+        {
+            itemOnPan = pv.gameObject;
+        }
+    }
+
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(itemOnPan != null ? itemOnPan.transform.position : Vector3.zero);
-            stream.SendNext(itemOnPan != null ? itemOnPan.transform.rotation : Quaternion.identity);
+            bool hasItem = (itemOnPan != null);
+            stream.SendNext(hasItem);
+            if (hasItem)
+            {
+                stream.SendNext(itemOnPan.GetComponent<PhotonView>().ViewID);
+            }
         }
         else
         {
-            if (itemOnPan != null)
+            bool hasItem = (bool)stream.ReceiveNext();
+            if (hasItem)
             {
-                Vector3 receivedPosition = (Vector3)stream.ReceiveNext();
-                Quaternion receivedRotation = (Quaternion)stream.ReceiveNext();
-                itemOnPan.transform.position = receivedPosition;
-                itemOnPan.transform.rotation = receivedRotation;
+                int viewID = (int)stream.ReceiveNext();
+                PhotonView pv = PhotonView.Find(viewID);
+                if (pv != null)
+                {
+                    itemOnPan = pv.gameObject;
+                }
+            }
+            else
+            {
+                itemOnPan = null;
             }
         }
     }

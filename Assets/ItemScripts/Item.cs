@@ -11,25 +11,42 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     public Material cookedMaterial;
     public Material burntMaterial;
 
-    // Item dondurulmuþsa, state artýk güncellenmez.
-    private bool isFrozen = false;
+    // Varsayýlan false – pan üzerine konulduðunda ResumeCooking ile true yapýlacak.
+    public bool isCookingActive = false;
 
     void Start()
     {
         UpdateMaterial();
     }
 
-    // Itemin durumunu dondurur.
-    public void FreezeState()
+    // Pan üzerine konulduðunda çaðrýlýr.
+    public void ResumeCooking()
     {
-        isFrozen = true;
-        Debug.Log("Item state frozen. Bundan sonra piþirme durumu deðiþmeyecek.");
+        // Eðer et çið ise piþirme aktif olsun.
+        if (currentState == MeatState.Raw)
+        {
+            isCookingActive = true;
+            Debug.Log("Item: Piþirme aktif edildi (Raw iken).");
+        }
+        else
+        {
+            // Zaten cooked veya burnt ise, piþirme devam etmesin.
+            isCookingActive = false;
+            Debug.Log("Item: Zaten piþmiþ, piþirme aktive deðil.");
+        }
+    }
+
+    // Pan’dan alýndýðýnda çaðrýlýr.
+    public void PauseCooking()
+    {
+        isCookingActive = false;
+        Debug.Log("Item: Piþirme duraklatýldý.");
     }
 
     public void SetCooked()
     {
-        if (isFrozen) return; // Durum dondurulmuþsa state deðiþmez.
-        if (currentState != MeatState.Raw) return;
+        // Yalnýzca et çiðken ve piþirme aktifken geçiþ yapalým.
+        if (!isCookingActive || currentState != MeatState.Raw) return;
 
         currentState = MeatState.Cooked;
         UpdateMaterial();
@@ -38,8 +55,8 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
 
     public void SetBurnt()
     {
-        if (isFrozen) return;
-        if (currentState == MeatState.Burnt) return;
+        // Sadece cooked durumundaysa ve piþirme aktifken burnt geçiþi yapalým.
+        if (!isCookingActive || currentState != MeatState.Cooked) return;
 
         currentState = MeatState.Burnt;
         UpdateMaterial();
@@ -49,7 +66,7 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void RPC_SetCooked()
     {
-        if (isFrozen) return;
+        if (!isCookingActive) return;
         currentState = MeatState.Cooked;
         UpdateMaterial();
     }
@@ -57,30 +74,26 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void RPC_SetBurnt()
     {
-        if (isFrozen) return;
+        if (!isCookingActive) return;
         currentState = MeatState.Burnt;
         UpdateMaterial();
     }
 
     void UpdateMaterial()
     {
-        Debug.Log($"Materyal Güncelleniyor: {currentState}");
-
+        Debug.Log("Item: Materyal güncelleniyor -> " + currentState);
         if (meatRenderer == null) return;
 
         switch (currentState)
         {
             case MeatState.Raw:
                 meatRenderer.material = rawMaterial;
-                Debug.Log("Raw materyali aktif!");
                 break;
             case MeatState.Cooked:
                 meatRenderer.material = cookedMaterial;
-                Debug.Log("Cooked materyali aktif!");
                 break;
             case MeatState.Burnt:
                 meatRenderer.material = burntMaterial;
-                Debug.Log("Burnt materyali aktif!");
                 break;
         }
     }
@@ -90,21 +103,15 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(currentState);
-            stream.SendNext(isFrozen);
+            stream.SendNext(isCookingActive);
         }
         else
         {
             MeatState receivedState = (MeatState)stream.ReceiveNext();
-            bool receivedFrozen = (bool)stream.ReceiveNext();
-
-            // Eðer item dondurulmuþsa, gelen güncellemeyi yoksayalým.
-            if (!isFrozen)
-            {
-                currentState = receivedState;
-                UpdateMaterial();
-            }
-            // Diðer istemcilerle freeze bilgisini de senkronize edelim.
-            isFrozen = receivedFrozen;
+            bool receivedCookingActive = (bool)stream.ReceiveNext();
+            currentState = receivedState;
+            isCookingActive = receivedCookingActive;
+            UpdateMaterial();
         }
     }
 }
