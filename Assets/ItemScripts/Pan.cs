@@ -32,6 +32,13 @@ public class Pan : MonoBehaviourPunCallbacks, IPunObservable
                 itemPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
                 GameObject item = itemOnPan;
                 itemOnPan = null;
+
+                // ?? Ocaða bildiriyoruz ki tava artýk boþ!
+                if (stove != null)
+                {
+                    stove.ResetCooking();
+                }
+
                 return item;
             }
         }

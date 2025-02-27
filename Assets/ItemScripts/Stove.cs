@@ -51,15 +51,36 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
 
         currentCookingTime += Time.deltaTime;
 
+        Item item = pan.itemOnPan?.GetComponent<Item>();
+        if (item == null) return;
+
+        // Eðer et zaten yanmýþsa, tekrar piþirme!
+        if (item.currentState == Item.MeatState.Burnt)
+        {
+            Debug.Log("Yanmýþ et tekrar piþirilemez!");
+            return;
+        }
+
         if (currentCookingTime >= cookingTime && currentCookingTime < burningTime)
         {
-            pan.itemOnPan.GetComponent<Item>().SetCooked();
+            if (item.currentState == Item.MeatState.Raw) // Sadece çiðse piþir
+            {
+                item.SetCooked();
+            }
         }
         else if (currentCookingTime >= burningTime)
         {
-            pan.itemOnPan.GetComponent<Item>().SetBurnt();
+            item.SetBurnt();
             isCooking = false;
         }
+    }
+
+    // ?? Piþirme sýfýrlama fonksiyonu
+    public void ResetCooking()
+    {
+        Debug.Log("Tavadaki et alýndý, piþirme sýfýrlandý!");
+        currentCookingTime = 0f;
+        isCooking = false;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

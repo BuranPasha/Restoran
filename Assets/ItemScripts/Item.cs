@@ -6,70 +6,68 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
     public enum MeatState { Raw, Cooked, Burnt }
     public MeatState currentState = MeatState.Raw;
 
-    public GameObject rawModel;
-    public GameObject cookedModel;
-    public GameObject burntModel;
+    public MeshRenderer meatRenderer;
+    public Material rawMaterial;
+    public Material cookedMaterial;
+    public Material burntMaterial;
 
     void Start()
     {
-        UpdateModel();
+        UpdateMaterial();
     }
 
     public void SetCooked()
     {
-        if (currentState != MeatState.Cooked)
-        {
-            currentState = MeatState.Cooked;
-            UpdateModel();
-            photonView.RPC("RPC_SetCooked", RpcTarget.AllBuffered);
-        }
+        // Eðer zaten Cooked veya Burnt ise piþirme!
+        if (currentState != MeatState.Raw) return;
+
+        currentState = MeatState.Cooked;
+        UpdateMaterial();
+        photonView.RPC("RPC_SetCooked", RpcTarget.AllBuffered);
     }
 
     public void SetBurnt()
     {
-        if (currentState != MeatState.Burnt)
-        {
-            currentState = MeatState.Burnt;
-            UpdateModel();
-            photonView.RPC("RPC_SetBurnt", RpcTarget.AllBuffered);
-        }
+        if (currentState == MeatState.Burnt) return; // Zaten yanmýþsa tekrar çaðýrma!
+
+        currentState = MeatState.Burnt;
+        UpdateMaterial();
+        photonView.RPC("RPC_SetBurnt", RpcTarget.AllBuffered);
     }
 
     [PunRPC]
     void RPC_SetCooked()
     {
         currentState = MeatState.Cooked;
-        UpdateModel();
+        UpdateMaterial();
     }
 
     [PunRPC]
     void RPC_SetBurnt()
     {
         currentState = MeatState.Burnt;
-        UpdateModel();
+        UpdateMaterial();
     }
 
-    void UpdateModel()
+    void UpdateMaterial()
     {
-        Debug.Log($"Model Güncelleniyor: {currentState}");
+        Debug.Log($"Materyal Güncelleniyor: {currentState}");
 
-        rawModel?.SetActive(false);
-        cookedModel?.SetActive(false);
-        burntModel?.SetActive(false);
+        if (meatRenderer == null) return;
 
         switch (currentState)
         {
             case MeatState.Raw:
-                rawModel?.SetActive(true);
-                Debug.Log("Raw model aktif!");
+                meatRenderer.material = rawMaterial;
+                Debug.Log("Raw materyali aktif!");
                 break;
             case MeatState.Cooked:
-                cookedModel?.SetActive(true);
-                Debug.Log("Cooked model aktif!");
+                meatRenderer.material = cookedMaterial;
+                Debug.Log("Cooked materyali aktif!");
                 break;
             case MeatState.Burnt:
-                burntModel?.SetActive(true);
-                Debug.Log("Burnt model aktif!");
+                meatRenderer.material = burntMaterial;
+                Debug.Log("Burnt materyali aktif!");
                 break;
         }
     }
@@ -86,7 +84,7 @@ public class Item : MonoBehaviourPunCallbacks, IPunObservable
             if (currentState != receivedState)
             {
                 currentState = receivedState;
-                UpdateModel();
+                UpdateMaterial();
             }
         }
     }
