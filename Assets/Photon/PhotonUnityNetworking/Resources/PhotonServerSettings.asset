@@ -60,8 +60,6 @@ MonoBehaviour:
   - RPC_ResetCookingAndTurnOff
   - RPC_ClearItemOnPan
   - RPC_SetItemOnPan
-  - RPC_TakeOwnership
-  - RPC_ResetOwnership
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
