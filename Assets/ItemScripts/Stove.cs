@@ -12,11 +12,18 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
     private float currentCookingTime = 0f;
     private bool isCooking = false;
 
+    public float interactionRange = 3f; // Oyuncunun en fazla ne kadar uzaktan ocakla etkileþime girebileceði
+    private Transform player; // Oyuncunun transform'u
+
     void Update()
     {
-        if (photonView == null) return;
+        if (player == null)
+        {
+            FindLocalPlayer(); // Oyuncu henüz atanmamýþsa bul
+            return; // Oyuncu yoksa devam etme
+        }
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F) && IsPlayerClose())
         {
             ToggleStove();
         }
@@ -24,17 +31,34 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
         if (!isOn) return;
         if (pan == null) return;
 
-        // Eðer pan üzerinde et varsa piþirme çalýþýyor.
         if (pan.itemOnPan != null)
         {
             CookItem();
         }
         else
         {
-            // Et alýndýysa timer’ý resetleyelim.
             isCooking = false;
             currentCookingTime = 0f;
         }
+    }
+
+    void FindLocalPlayer()
+    {
+        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (obj.GetComponent<PhotonView>().IsMine) // Yalnýzca bizim kontrol ettiðimiz oyuncuyu al
+            {
+                player = obj.transform;
+                Debug.Log("Local player found!");
+                break;
+            }
+        }
+    }
+
+    bool IsPlayerClose()
+    {
+        if (player == null) return false;
+        return Vector3.Distance(player.position, transform.position) <= interactionRange;
     }
 
     void ToggleStove()
@@ -57,7 +81,6 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
         if (!isCooking)
         {
             isCooking = true;
-            // Yeni piþirilen etlerde timer sýfýrdan baþlasýn.
             currentCookingTime = 0f;
         }
 
@@ -73,7 +96,6 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
             return;
         }
 
-        // Eðer süre piþirme aralýðýndaysa (örneðin 10s'da raw ? cooked geçiþi)
         if (currentCookingTime >= cookingTime && currentCookingTime < burningTime)
         {
             if (item.currentState == Item.MeatState.Raw)
@@ -83,7 +105,6 @@ public class Stove : MonoBehaviourPunCallbacks, IPunObservable
         }
         else if (currentCookingTime >= burningTime)
         {
-            // Eðer et pan üzerindeyken uygunsa burnt'a geçsin.
             item.SetBurnt();
             isCooking = false;
         }
