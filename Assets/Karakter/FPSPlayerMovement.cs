@@ -80,8 +80,8 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
 
     void Move()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float verticalInput = Input.GetAxisRaw("Vertical");
 
         Vector3 moveDirection = playerCamera.transform.forward * verticalInput + playerCamera.transform.right * horizontalInput;
         moveDirection.y = 0;
@@ -100,8 +100,20 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
             currentSpeed = speed;
         }
 
-        characterController.Move(moveDirection * currentSpeed * Time.deltaTime);
+        // Hareket yönüne sadece X ve Z ekseninde hýz ekleyelim
+        Vector3 moveVelocity = moveDirection * currentSpeed;
+
+        // Anýnda durma: Sadece yatay hareketi sýfýrla, yerçekimi etkisini koru
+        if (horizontalInput == 0 && verticalInput == 0)
+        {
+            moveVelocity.x = 0;
+            moveVelocity.z = 0;
+        }
+
+        characterController.Move((moveVelocity + velocity) * Time.deltaTime);
     }
+
+
 
     void Jump()
     {

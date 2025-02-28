@@ -377,10 +377,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterController: {fileID: 0}
   playerCamera: {fileID: 7389575752071842261}
-  speed: 5
-  sprintSpeed: 8
+  speed: 4
+  sprintSpeed: 7
   crouchSpeed: 3
-  jumpHeight: 1.5
+  jumpHeight: 1.1
   gravity: -9.81
   lookSpeed: 2
   isSitting: 0

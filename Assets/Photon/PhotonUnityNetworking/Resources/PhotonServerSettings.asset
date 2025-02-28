@@ -60,6 +60,9 @@ MonoBehaviour:
   - RPC_ResetCookingAndTurnOff
   - RPC_ClearItemOnPan
   - RPC_SetItemOnPan
+  - RPC_AddIngredientToPot
+  - RPC_StartCooking
+  - RPC_CreateCraftedItem
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
