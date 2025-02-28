@@ -62,10 +62,6 @@ MonoBehaviour:
   - RPC_SetItemOnPan
   - RPC_TakeOwnership
   - RPC_ResetOwnership
-  - RPC_ResetOwnershipAndTransfer
-  - RPC_StealItem
-  - RPC_PlaceObject
-  - RPC_ForceReleaseItem
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

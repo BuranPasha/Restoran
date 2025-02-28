@@ -16,7 +16,7 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         {
             if (heldObject == null)
             {
-                TryPickUpOrResetOwnership();
+                TryPickUp();
             }
             else
             {
@@ -25,45 +25,53 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    void TryPickUpOrResetOwnership()
+    void TryPickUp()
     {
         RaycastHit hit;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(ray, out hit, interactionDistance))
         {
-            GameObject targetObject = hit.collider.gameObject;
+            GameObject objectToPickUp = hit.collider.gameObject;
 
-            if (!targetObject.CompareTag("Pickable")) return;
-
-            PhotonView targetPhotonView = targetObject.GetComponent<PhotonView>();
-            if (targetPhotonView == null) return;
-
-            // Eðer nesne baþka bir oyuncunun elindeyse sahipliði sýfýrla
-            if (targetPhotonView.Owner != null)
+            // Sadece "Pickable" tag'ine sahip nesneleri al
+            if (!objectToPickUp.CompareTag("Pickable"))
             {
-                Debug.Log("Nesne baþka bir oyuncunun elinde. Sahiplik sýfýrlanýyor...");
-                photonView.RPC("RPC_ResetOwnership", RpcTarget.AllBuffered, targetPhotonView.ViewID);
+                Debug.Log("Bu nesne alýnamaz: " + objectToPickUp.name);
                 return;
             }
 
-            // Eðer nesne sahipsizse al
-            photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, targetPhotonView.ViewID);
+            PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
+
+            if (objectPhotonView == null)
+            {
+                Debug.Log("Nesne PhotonView bileþenine sahip deðil: " + objectToPickUp.name);
+                return;
+            }
+
+            // Eðer bir oyuncunun sahip olduðu bir nesneye eriþilirse, sahipliði sýfýrla
+            if (objectPhotonView.Owner != null && objectPhotonView.Owner != PhotonNetwork.LocalPlayer)
+            {
+                Debug.Log("Nesnenin sahipliði sýfýrlanýyor...");
+                photonView.RPC("RPC_ResetOwnership", RpcTarget.AllBuffered, objectPhotonView.ViewID);
+            }
+
+            photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objectPhotonView.ViewID);
         }
     }
 
-    [PunRPC]
-    void RPC_ResetOwnership(int objectViewID)
+    void TryDropOrPlace()
     {
-        GameObject objectToReset = PhotonView.Find(objectViewID).gameObject;
-        PhotonView objectPhotonView = objectToReset.GetComponent<PhotonView>();
+        GameObject leftPosition = GameObject.FindGameObjectWithTag(leftPositionTag);
 
-        if (objectPhotonView != null && objectPhotonView.Owner != null)
+        if (leftPosition != null && Vector3.Distance(transform.position, leftPosition.transform.position) <= interactionDistance)
         {
-            objectPhotonView.TransferOwnership(0); // Sahipliði sýfýrla (kimseye ait deðil)
+            photonView.RPC("RPC_PlaceOnLeftPosition", RpcTarget.AllBuffered, heldObjectPhotonView.ViewID, leftPosition.transform.position);
         }
-
-        Debug.Log("Nesnenin sahipliði sýfýrlandý: " + objectToReset.name);
+        else
+        {
+            DropObject();
+        }
     }
 
     [PunRPC]
@@ -94,18 +102,18 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         Debug.Log("Nesne alýndý: " + heldObject.name);
     }
 
-    void TryDropOrPlace()
+    [PunRPC]
+    void RPC_ResetOwnership(int objectViewID)
     {
-        GameObject leftPosition = GameObject.FindGameObjectWithTag(leftPositionTag);
+        GameObject objectToReset = PhotonView.Find(objectViewID).gameObject;
+        PhotonView objectPhotonView = objectToReset.GetComponent<PhotonView>();
 
-        if (leftPosition != null && Vector3.Distance(transform.position, leftPosition.transform.position) <= interactionDistance)
+        if (objectPhotonView.IsMine)
         {
-            photonView.RPC("RPC_PlaceOnLeftPosition", RpcTarget.AllBuffered, heldObjectPhotonView.ViewID, leftPosition.transform.position);
+            objectPhotonView.TransferOwnership(0); // Sahipliði sýfýrla (kimseye ait deðil)
         }
-        else
-        {
-            DropObject();
-        }
+
+        Debug.Log("Nesnenin sahipliði sýfýrlandý: " + objectToReset.name);
     }
 
     [PunRPC]
