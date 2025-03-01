@@ -1,5 +1,5 @@
-using Photon.Pun;
 using UnityEngine;
+using Photon.Pun;
 
 public class DoorTrigger : MonoBehaviour
 {
@@ -9,8 +9,8 @@ public class DoorTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Tüm oyuncular için kapýlarý aç
-            doorController.photonView.RPC("SetDoorState", RpcTarget.All, true);
+            // Oyuncu kapýya yaklaþýnca, kapýyý aç
+            doorController.photonView.RPC("SetDoorState", RpcTarget.All, true, other.transform.position);
         }
     }
 
@@ -18,8 +18,8 @@ public class DoorTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Tüm oyuncular için kapýlarý kapat
-            doorController.photonView.RPC("SetDoorState", RpcTarget.All, false);
+            // Oyuncu kapýyý terk ederse, kapýyý kapat
+            doorController.photonView.RPC("SetDoorState", RpcTarget.All, false, other.transform.position);
         }
     }
 }

@@ -715,6 +715,90 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &291932600 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e4059e4337a2864db8580c24e5bfa15, type: 3}
+  m_PrefabInstance: {fileID: 1327102273}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &291932601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291932600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b601738855a85af40ac8ed904739c96e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doorController: {fileID: 291932602}
+--- !u!114 &291932602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291932600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0def8758eae60a4fba3af9dedebe258, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftDoor: {fileID: 291932606}
+  rightDoor: {fileID: 1751303185}
+  openAngle: 70
+  smoothSpeed: 70
+  doorCenter: {fileID: 1109367436}
+--- !u!114 &291932603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291932600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 291932602}
+  sceneViewId: 16
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!4 &291932606 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1e4059e4337a2864db8580c24e5bfa15, type: 3}
+  m_PrefabInstance: {fileID: 1327102273}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &291932607
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 291932600}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 30, y: 2.3, z: 2.29}
+  m_Center: {x: 1.0347043, y: 0.85, z: 1.12}
 --- !u!1001 &349980559
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2307,6 +2391,37 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!1 &1109367435
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1109367436}
+  m_Layer: 0
+  m_Name: DoorCenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1109367436
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1109367435}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.746, y: 1.4, z: -4.887}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1110112486
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2655,12 +2770,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1e4059e4337a2864db8580c24e5bfa15, type: 3}
       propertyPath: m_Name
-      value: "Kap\u0131 sol1"
+      value: "Kap\u0131 sol"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e4059e4337a2864db8580c24e5bfa15, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 291932603}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e4059e4337a2864db8580c24e5bfa15, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 291932602}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e4059e4337a2864db8580c24e5bfa15, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 291932601}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 1e4059e4337a2864db8580c24e5bfa15, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 291932607}
   m_SourcePrefab: {fileID: 100100000, guid: 1e4059e4337a2864db8580c24e5bfa15, type: 3}
 --- !u!1 &1339300574 stripped
 GameObject:
@@ -3335,6 +3462,11 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!4 &1751303185 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 05d67c0aeadf23a439e97831405209e6, type: 3}
+  m_PrefabInstance: {fileID: 2006368913}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1811886735
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3782,7 +3914,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 05d67c0aeadf23a439e97831405209e6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.8561811
+      value: -1.545
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 05d67c0aeadf23a439e97831405209e6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3790,7 +3922,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 05d67c0aeadf23a439e97831405209e6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3.1930342
+      value: -3.893
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 05d67c0aeadf23a439e97831405209e6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3822,7 +3954,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 05d67c0aeadf23a439e97831405209e6, type: 3}
       propertyPath: m_Name
-      value: "Kap\u0131 sa\u011F1"
+      value: "Kap\u0131 sa\u011F"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4291,3 +4423,4 @@ SceneRoots:
   - {fileID: 627263088}
   - {fileID: 2006368913}
   - {fileID: 1327102273}
+  - {fileID: 1109367436}
