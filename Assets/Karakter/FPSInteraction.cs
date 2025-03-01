@@ -49,12 +49,16 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
                 return;
             }
 
-            if (!objectPhotonView.IsMine && !objectPhotonView.AmOwner)
+            // Eþya zaten baþka bir oyuncu tarafýndan alýnmýþsa iþlem yapma
+            if (objectPhotonView.IsMine || objectPhotonView.Owner == null || objectPhotonView.Owner == PhotonNetwork.LocalPlayer)
             {
                 objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+                photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objectPhotonView.ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
             }
-
-            photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objectPhotonView.ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
+            else
+            {
+                Debug.Log("Bu eþya baþka bir oyuncu tarafýndan alýnmýþ: " + objectToPickUp.name);
+            }
         }
     }
 
@@ -78,6 +82,7 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         GameObject objectToPickUp = PhotonView.Find(objectViewID).gameObject;
         PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
 
+        // Eþyayý alan oyuncuya sahiplik ver
         if (!objectPhotonView.IsMine)
         {
             objectPhotonView.TransferOwnership(ownerActorNumber);
@@ -138,9 +143,9 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         PhotonView heldObjectPhotonView = heldObject.GetComponent<PhotonView>();
         if (heldObjectPhotonView != null && heldObjectPhotonView.IsMine)
         {
-            // Sahipliði MasterClient'a ver (sahipsiz gibi davranmasý için)
-            heldObjectPhotonView.TransferOwnership(PhotonNetwork.MasterClient);
-            Debug.Log("Nesne býrakýldý ve MasterClient'a devredildi: " + heldObject.name);
+            // Sahipliði serbest býrak
+            heldObjectPhotonView.TransferOwnership(0); // Sahipsiz yap
+            Debug.Log("Nesne býrakýldý ve sahipliði serbest býrakýldý: " + heldObject.name);
         }
 
         photonView.RPC("RPC_DropObject", RpcTarget.AllBuffered, heldObjectPhotonView.ViewID);
@@ -159,12 +164,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         droppedObject.transform.SetParent(null);
-
-        // Sahipliði serbest býrak
-        if (droppedObject.GetComponent<PhotonView>().IsMine)
-        {
-            droppedObject.GetComponent<PhotonView>().TransferOwnership(0); // Sahipsiz yap
-        }
 
         heldObject = null;
         Debug.Log("Nesne býrakýldý: " + droppedObject.name);
