@@ -21,9 +21,9 @@ public class DoorController : MonoBehaviourPunCallbacks, IPunObservable
         leftDoorClosedRotation = leftDoor.rotation;
         rightDoorClosedRotation = rightDoor.rotation;
 
-        // Kapýlarýn açýk rotasyonlarýný hesapla
-        leftDoorOpenRotation = leftDoorClosedRotation * Quaternion.Euler(0, -openAngle, 0);
-        rightDoorOpenRotation = rightDoorClosedRotation * Quaternion.Euler(0, openAngle, 0);
+        // Kapýlarýn açýk rotasyonlarýný varsayýlan olarak ayarla (sonradan deðiþtirilecek)
+        leftDoorOpenRotation = leftDoorClosedRotation;
+        rightDoorOpenRotation = rightDoorClosedRotation;
     }
 
     void Update()
@@ -42,26 +42,25 @@ public class DoorController : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    // Kapý açýlma durumunu yön belirleyerek ayarlama
     [PunRPC]
     public void SetDoorState(bool state, Vector3 playerPosition)
     {
         isOpen = state;
 
-        // Oyuncunun kapýya yaklaþma yönünü kontrol et
+        // Oyuncunun kapýya olan yönünü belirle
         Vector3 direction = playerPosition - doorCenter.position;
 
-        if (direction.z > 0) // Kapýnýn arkasýndan yaklaþýyor
+        if (direction.x > 0) // Saðdan yaklaþýyor
         {
-            // Kapýyý ters yönde aç
-            leftDoorOpenRotation = leftDoorClosedRotation * Quaternion.Euler(0, openAngle, 0);
-            rightDoorOpenRotation = rightDoorClosedRotation * Quaternion.Euler(0, -openAngle, 0);
+            // **Kapýyý oyuncudan UZAK aç**
+            leftDoorOpenRotation = leftDoorClosedRotation * Quaternion.Euler(0, -openAngle, 0); // Sol kapýyý öne aç
+            rightDoorOpenRotation = rightDoorClosedRotation * Quaternion.Euler(0, openAngle, 0); // Sað kapýyý geriye aç
         }
-        else // Kapýnýn önünden yaklaþýyor
+        else if (direction.x < 0) // Soldan yaklaþýyor
         {
-            // Kapýyý normal yönde aç
-            leftDoorOpenRotation = leftDoorClosedRotation * Quaternion.Euler(0, -openAngle, 0);
-            rightDoorOpenRotation = rightDoorClosedRotation * Quaternion.Euler(0, openAngle, 0);
+            // **Kapýyý oyuncudan UZAK aç**
+            leftDoorOpenRotation = leftDoorClosedRotation * Quaternion.Euler(0, openAngle, 0); // Sol kapýyý geriye aç
+            rightDoorOpenRotation = rightDoorClosedRotation * Quaternion.Euler(0, -openAngle, 0); // Sað kapýyý öne aç
         }
     }
 
