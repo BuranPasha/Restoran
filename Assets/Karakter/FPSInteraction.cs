@@ -49,7 +49,8 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
                 return;
             }
 
-            if (!objectPhotonView.IsMine && !objectPhotonView.AmOwner)
+            // Sahipliði transfer etmeden önce kontrol et
+            if (!objectPhotonView.IsMine)
             {
                 objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
@@ -75,7 +76,14 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void RPC_PickUpObject(int objectViewID, int ownerActorNumber)
     {
-        GameObject objectToPickUp = PhotonView.Find(objectViewID).gameObject;
+        PhotonView foundView = PhotonView.Find(objectViewID);
+        if (foundView == null)
+        {
+            Debug.LogError("PhotonView bulunamadý: " + objectViewID);
+            return;
+        }
+
+        GameObject objectToPickUp = foundView.gameObject;
         PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
 
         if (!objectPhotonView.IsMine)
@@ -109,10 +117,17 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void RPC_PlaceOnLeftPosition(int objectViewID, Vector3 position)
     {
-        GameObject objectToPlace = PhotonView.Find(objectViewID).gameObject;
+        PhotonView foundView = PhotonView.Find(objectViewID);
+        if (foundView == null)
+        {
+            Debug.LogError("PhotonView bulunamadý: " + objectViewID);
+            return;
+        }
+
+        GameObject objectToPlace = foundView.gameObject;
         objectToPlace.transform.SetParent(null);
         objectToPlace.transform.position = position;
-        objectToPlace.transform.rotation = Quaternion.identity;
+        objectToPlace.transform.rotation = Quaternion.identity; // Rotasyonu sýfýrla
 
         Rigidbody rb = objectToPlace.GetComponent<Rigidbody>();
         if (rb != null)
@@ -135,7 +150,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (heldObject == null) return;
 
-        PhotonView heldObjectPhotonView = heldObject.GetComponent<PhotonView>();
         if (heldObjectPhotonView != null && heldObjectPhotonView.IsMine)
         {
             // Sahipliði MasterClient'a ver (sahipsiz gibi davranmasý için)
@@ -149,7 +163,14 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void RPC_DropObject(int objectViewID)
     {
-        GameObject droppedObject = PhotonView.Find(objectViewID).gameObject;
+        PhotonView foundView = PhotonView.Find(objectViewID);
+        if (foundView == null)
+        {
+            Debug.LogError("PhotonView bulunamadý: " + objectViewID);
+            return;
+        }
+
+        GameObject droppedObject = foundView.gameObject;
         Rigidbody droppedRigidbody = droppedObject.GetComponent<Rigidbody>();
 
         if (droppedRigidbody != null)
@@ -159,11 +180,12 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         droppedObject.transform.SetParent(null);
+        droppedObject.transform.rotation = Quaternion.identity; // Rotasyonu sýfýrla
 
         // Sahipliði serbest býrak
-        if (droppedObject.GetComponent<PhotonView>().IsMine)
+        if (foundView.IsMine)
         {
-            droppedObject.GetComponent<PhotonView>().TransferOwnership(0); // Sahipsiz yap
+            foundView.TransferOwnership(0); // Sahipsiz yap
         }
 
         heldObject = null;
@@ -179,10 +201,11 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         }
         else
         {
+            Vector3 receivedPosition = (Vector3)stream.ReceiveNext();
+            Quaternion receivedRotation = (Quaternion)stream.ReceiveNext();
+
             if (heldObject != null)
             {
-                Vector3 receivedPosition = (Vector3)stream.ReceiveNext();
-                Quaternion receivedRotation = (Quaternion)stream.ReceiveNext();
                 heldObject.transform.position = receivedPosition;
                 heldObject.transform.rotation = receivedRotation;
             }
