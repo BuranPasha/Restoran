@@ -9,6 +9,7 @@ TagManager:
   - Chair
   - LeftPosition
   - NoPickup
+  - Door
   layers:
   - Default
   - TransparentFX
