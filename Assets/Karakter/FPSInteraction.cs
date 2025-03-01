@@ -49,16 +49,12 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
                 return;
             }
 
-            // Eþya sahipsizse veya sahibi ben isem al
-            if (objectPhotonView.Owner == null || objectPhotonView.Owner == PhotonNetwork.LocalPlayer)
+            if (!objectPhotonView.IsMine && !objectPhotonView.AmOwner)
             {
                 objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
-                photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objectPhotonView.ViewID);
             }
-            else
-            {
-                Debug.Log("Bu eþya baþka bir oyuncu tarafýndan alýnmýþ: " + objectToPickUp.name);
-            }
+
+            photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objectPhotonView.ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
         }
     }
 
@@ -77,15 +73,14 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-    void RPC_PickUpObject(int objectViewID)
+    void RPC_PickUpObject(int objectViewID, int ownerActorNumber)
     {
         GameObject objectToPickUp = PhotonView.Find(objectViewID).gameObject;
         PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
 
-        // Eþyayý alan oyuncuya sahiplik ver
         if (!objectPhotonView.IsMine)
         {
-            objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+            objectPhotonView.TransferOwnership(ownerActorNumber);
         }
 
         heldObject = objectToPickUp;
@@ -133,13 +128,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
             itemComponent.ResumeCooking();
         }
 
-        // Eþyanýn sahipsiz olduðunu belirt
-        PhotonView droppedPhotonView = objectToPlace.GetComponent<PhotonView>();
-        if (droppedPhotonView != null)
-        {
-            droppedPhotonView.TransferOwnership(0); // Sahipsiz yap
-        }
-
         heldObject = null;
     }
 
@@ -150,9 +138,9 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         PhotonView heldObjectPhotonView = heldObject.GetComponent<PhotonView>();
         if (heldObjectPhotonView != null && heldObjectPhotonView.IsMine)
         {
-            // Sahipliði serbest býrak
-            heldObjectPhotonView.TransferOwnership(0); // Sahipsiz yap
-            Debug.Log("Nesne býrakýldý ve sahipliði serbest býrakýldý: " + heldObject.name);
+            // Sahipliði MasterClient'a ver (sahipsiz gibi davranmasý için)
+            heldObjectPhotonView.TransferOwnership(PhotonNetwork.MasterClient);
+            Debug.Log("Nesne býrakýldý ve MasterClient'a devredildi: " + heldObject.name);
         }
 
         photonView.RPC("RPC_DropObject", RpcTarget.AllBuffered, heldObjectPhotonView.ViewID);
@@ -172,11 +160,10 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
         droppedObject.transform.SetParent(null);
 
-        // Eþyanýn sahipsiz olduðunu belirt
-        PhotonView droppedPhotonView = droppedObject.GetComponent<PhotonView>();
-        if (droppedPhotonView != null)
+        // Sahipliði serbest býrak
+        if (droppedObject.GetComponent<PhotonView>().IsMine)
         {
-            droppedPhotonView.TransferOwnership(0); // Sahipsiz yap
+            droppedObject.GetComponent<PhotonView>().TransferOwnership(0); // Sahipsiz yap
         }
 
         heldObject = null;
