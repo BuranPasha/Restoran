@@ -383,6 +383,8 @@ MonoBehaviour:
   jumpHeight: 1.1
   gravity: -9.81
   lookSpeed: 2
+  sprintFov: 80
+  normalFov: 60
   isSitting: 0
 --- !u!114 &1289281501412312798
 MonoBehaviour:

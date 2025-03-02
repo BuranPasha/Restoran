@@ -68,6 +68,10 @@ MonoBehaviour:
   - RPC_ToggleDoor
   - SetDoorState
   - SetDoorStateRPC
+  - RPC_PlaceItemOnTray
+  - RPC_PickUpTray
+  - RPC_ClearItemOnTray
+  - RPC_SetItemOnTray
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

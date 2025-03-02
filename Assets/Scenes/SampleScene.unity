@@ -415,6 +415,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "hamburger ekmek \xFCst"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e59d80d758ef365459b86d87d2fc1cee, type: 3}
+      propertyPath: m_TagString
+      value: Pickable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -987,6 +991,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: hamburger ekmek alt
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3d8daa3981f9c924d91befe5db77015b, type: 3}
+      propertyPath: m_TagString
+      value: Pickable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1382,6 +1390,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "hamburger birle\u015Fmi\u015F"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d858d8180c0acbd4f92d66312bff3675, type: 3}
+      propertyPath: m_TagString
+      value: Pickable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1679,6 +1691,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: d40f3021e1a1a144a9e7f21c2d64126e, type: 3}
   m_PrefabInstance: {fileID: 831370525}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &820204152
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 820204153}
+  m_Layer: 0
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &820204153
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 820204152}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.608, y: 0, z: -0.081652}
+  m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 933305824}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &826956119 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 49643cadaca7a7147abf9e1ecd3b9043, type: 3}
@@ -2436,7 +2479,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 958573466}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 820204153}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1306263887}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2035493488}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
       insertIndex: -1
@@ -2543,6 +2598,42 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!4 &933305824 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
+  m_PrefabInstance: {fileID: 933305813}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &958573465
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 958573466}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &958573466
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 958573465}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.027194817, y: 0, z: 0.653}
+  m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 933305824}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &994088649
 GameObject:
   m_ObjectHideFlags: 0
@@ -3159,6 +3250,37 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!1 &1306263886
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1306263887}
+  m_Layer: 0
+  m_Name: GameObject (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1306263887
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306263886}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.661, y: 0, z: -0.081652}
+  m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 933305824}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1327102273
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4059,6 +4181,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "hamburger k\xF6fte"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d2dc213d4bcf8764784158f8e38a3dd1, type: 3}
+      propertyPath: m_TagString
+      value: Pickable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4782,6 +4908,37 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 1
+--- !u!1 &2035493487
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2035493488}
+  m_Layer: 0
+  m_Name: GameObject (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2035493488
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2035493487}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.027194817, y: 0, z: -0.672}
+  m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 933305824}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2071287295
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4833,6 +4990,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 17dabc51106f8fe4794fb6ba5ff11a4a, type: 3}
       propertyPath: m_Name
       value: hamburger domates
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 17dabc51106f8fe4794fb6ba5ff11a4a, type: 3}
+      propertyPath: m_TagString
+      value: Pickable
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5014,6 +5175,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: hamburger peynir
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fe87f9b0a9f7fac49ac08051b9bbbf69, type: 3}
+      propertyPath: m_TagString
+      value: Pickable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5099,7 +5264,6 @@ SceneRoots:
   - {fileID: 831370525}
   - {fileID: 994088652}
   - {fileID: 881255711}
-  - {fileID: 933305813}
   - {fileID: 1981358082}
   - {fileID: 1873384479}
   - {fileID: 1568124102}
@@ -5119,3 +5283,4 @@ SceneRoots:
   - {fileID: 1495037850}
   - {fileID: 80687779}
   - {fileID: 930421791}
+  - {fileID: 933305813}

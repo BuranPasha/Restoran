@@ -12,15 +12,21 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-        if (photonView.IsMine && Input.GetKeyDown(KeyCode.E))
+        if (photonView.IsMine)
         {
-            if (heldObject == null)
+            if (Input.GetKeyDown(KeyCode.E)) // E tuþu ile nesne al
             {
-                TryPickUp();
+                if (heldObject == null)
+                {
+                    TryPickUp();
+                }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.G)) // G tuþu ile nesne býrak
             {
-                TryDropOrPlace();
+                if (heldObject != null)
+                {
+                    TryDropOrPlace();
+                }
             }
         }
     }

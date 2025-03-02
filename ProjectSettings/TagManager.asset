@@ -10,6 +10,7 @@ TagManager:
   - LeftPosition
   - NoPickup
   - Door
+  - Tray
   layers:
   - Default
   - TransparentFX
