@@ -7,45 +7,65 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     public Transform holdPosition;
     public string leftPositionTag = "LeftPosition"; // Býrakma noktasýnýn etiketi
 
+    private GameObject[] inventory = new GameObject[5]; // 5 Slotlu Envanter
+    private int selectedSlot = 0; // Baþlangýçta 1. slot seçili
+
     private GameObject heldObject = null;
     private Rigidbody heldRigidbody;
     private PhotonView heldObjectPhotonView;
 
-    private GameObject[] inventory = new GameObject[5]; // 5 slotlu envanter
-
     void Update()
     {
-        if (photonView.IsMine)
+        if (!photonView.IsMine) return;
+
+        // Envanterdeki slotlarý deðiþtirme (1-5 tuþlarý)
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SelectSlot(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SelectSlot(1);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SelectSlot(2);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) SelectSlot(3);
+        if (Input.GetKeyDown(KeyCode.Alpha5)) SelectSlot(4);
+
+        // Nesne alma
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            if (Input.GetKeyDown(KeyCode.E)) // E tuþu ile nesne al
+            if (heldObject == null)
             {
-                if (heldObject == null)
-                {
-                    TryPickUp();
-                }
+                TryPickUp();
             }
-            else if (Input.GetKeyDown(KeyCode.G)) // G tuþu ile nesne býrak
+        }
+        // Nesne býrakma
+        else if (Input.GetKeyDown(KeyCode.G))
+        {
+            if (heldObject != null)
             {
-                if (heldObject != null)
-                {
-                    TryDropOrPlace();
-                }
+                TryDropOrPlace();
             }
+        }
+    }
 
-            // Envantere ekleme (R tuþu ile elindekini envantere koy)
-            if (Input.GetKeyDown(KeyCode.R) && heldObject != null)
-            {
-                StoreItemInInventory();
-            }
+    void SelectSlot(int slotIndex)
+    {
+        if (heldObject != null)
+        {
+            // Mevcut eldeki nesneyi envantere koy
+            inventory[selectedSlot] = heldObject;
+            heldObject.SetActive(false); // Nesneyi sakla
+        }
 
-            // Envanterden nesne alma (1-5 tuþlarý)
-            for (int i = 0; i < inventory.Length; i++)
-            {
-                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-                {
-                    RetrieveItemFromInventory(i);
-                }
-            }
+        selectedSlot = slotIndex;
+
+        // Eðer yeni slottaki bir eþya varsa, onu elde tut
+        if (inventory[selectedSlot] != null)
+        {
+            heldObject = inventory[selectedSlot];
+            heldObject.SetActive(true);
+            heldObject.transform.SetParent(holdPosition);
+            heldObject.transform.localPosition = Vector3.zero;
+            heldObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
+        }
+        else
+        {
+            heldObject = null;
         }
     }
 
@@ -58,19 +78,10 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         {
             GameObject objectToPickUp = hit.collider.gameObject;
 
-            if (!objectToPickUp.CompareTag("Pickable"))
-            {
-                Debug.Log("Bu nesne alýnamaz: " + objectToPickUp.name);
-                return;
-            }
+            if (!objectToPickUp.CompareTag("Pickable")) return;
 
             PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
-
-            if (objectPhotonView == null)
-            {
-                Debug.Log("Nesne PhotonView bileþenine sahip deðil: " + objectToPickUp.name);
-                return;
-            }
+            if (objectPhotonView == null) return;
 
             if (!objectPhotonView.IsMine)
             {
@@ -81,72 +92,30 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    void TryDropOrPlace()
-    {
-        GameObject leftPosition = GameObject.FindGameObjectWithTag(leftPositionTag);
-
-        if (leftPosition != null && Vector3.Distance(transform.position, leftPosition.transform.position) <= interactionDistance)
-        {
-            photonView.RPC("RPC_PlaceOnLeftPosition", RpcTarget.AllBuffered, heldObjectPhotonView.ViewID, leftPosition.transform.position);
-        }
-        else
-        {
-            DropObject();
-        }
-    }
-
-    void StoreItemInInventory()
-    {
-        for (int i = 0; i < inventory.Length; i++)
-        {
-            if (inventory[i] == null) // Boþ slot bulursa
-            {
-                inventory[i] = heldObject;
-                heldObject.SetActive(false); // Envantere alýnan objeyi gizle
-                heldObject = null;
-                heldObjectPhotonView = null;
-                heldRigidbody = null;
-                Debug.Log("Nesne envantere eklendi: Slot " + (i + 1));
-                return;
-            }
-        }
-        Debug.Log("Envanter dolu!");
-    }
-
-    void RetrieveItemFromInventory(int slotIndex)
-    {
-        if (inventory[slotIndex] != null && heldObject == null) // Slot doluysa ve elimizde nesne yoksa
-        {
-            heldObject = inventory[slotIndex];
-            inventory[slotIndex] = null;
-            heldObject.SetActive(true); // Objeyi tekrar görünür yap
-            photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, heldObject.GetComponent<PhotonView>().ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
-            Debug.Log("Nesne eline alýndý: Slot " + (slotIndex + 1));
-        }
-    }
-
     [PunRPC]
     void RPC_PickUpObject(int objectViewID, int ownerActorNumber)
     {
         PhotonView foundView = PhotonView.Find(objectViewID);
-        if (foundView == null)
-        {
-            Debug.LogError("PhotonView bulunamadý: " + objectViewID);
-            return;
-        }
+        if (foundView == null) return;
 
         GameObject objectToPickUp = foundView.gameObject;
-        PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
-
-        if (!objectPhotonView.IsMine)
+        if (!objectToPickUp.GetComponent<PhotonView>().IsMine)
         {
-            objectPhotonView.TransferOwnership(ownerActorNumber);
+            objectToPickUp.GetComponent<PhotonView>().TransferOwnership(ownerActorNumber);
+        }
+
+        // Eðer elde nesne varsa, envantere ekle
+        if (heldObject != null)
+        {
+            inventory[selectedSlot] = heldObject;
+            heldObject.SetActive(false);
         }
 
         heldObject = objectToPickUp;
-        heldObjectPhotonView = heldObject.GetComponent<PhotonView>();
-        heldRigidbody = heldObject.GetComponent<Rigidbody>();
+        inventory[selectedSlot] = heldObject;
+        heldObject.SetActive(true);
 
+        heldRigidbody = heldObject.GetComponent<Rigidbody>();
         if (heldRigidbody != null)
         {
             heldRigidbody.isKinematic = true;
@@ -159,27 +128,65 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         heldObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
     }
 
-    void DropObject()
+    void TryDropOrPlace()
     {
         if (heldObject == null) return;
 
-        if (heldObjectPhotonView != null && heldObjectPhotonView.IsMine)
+        GameObject leftPosition = GameObject.FindGameObjectWithTag(leftPositionTag);
+        if (leftPosition != null && Vector3.Distance(transform.position, leftPosition.transform.position) <= interactionDistance)
         {
-            heldObjectPhotonView.TransferOwnership(PhotonNetwork.MasterClient);
+            photonView.RPC("RPC_PlaceOnLeftPosition", RpcTarget.AllBuffered, heldObject.GetComponent<PhotonView>().ViewID, leftPosition.transform.position);
+        }
+        else
+        {
+            DropObject();
+        }
+    }
+
+    [PunRPC]
+    void RPC_PlaceOnLeftPosition(int objectViewID, Vector3 position)
+    {
+        PhotonView foundView = PhotonView.Find(objectViewID);
+        if (foundView == null) return;
+
+        GameObject objectToPlace = foundView.gameObject;
+        objectToPlace.transform.SetParent(null);
+        objectToPlace.transform.position = position;
+        objectToPlace.transform.rotation = Quaternion.identity;
+
+        Rigidbody rb = objectToPlace.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.freezeRotation = true;
         }
 
-        photonView.RPC("RPC_DropObject", RpcTarget.AllBuffered, heldObjectPhotonView.ViewID);
+        heldObject = null;
+        inventory[selectedSlot] = null;
     }
+
+    void DropObject()
+    {
+        if (inventory[selectedSlot] == null) return; // Eðer seçili slot boþsa çýk
+
+        GameObject objectToDrop = inventory[selectedSlot];
+        PhotonView objectPhotonView = objectToDrop.GetComponent<PhotonView>();
+
+        if (objectPhotonView != null && objectPhotonView.IsMine)
+        {
+            // Sahipliði MasterClient'a ver (sahipsiz gibi davranmasý için)
+            objectPhotonView.TransferOwnership(PhotonNetwork.MasterClient);
+        }
+
+        photonView.RPC("RPC_DropObject", RpcTarget.AllBuffered, objectPhotonView.ViewID);
+    }
+
 
     [PunRPC]
     void RPC_DropObject(int objectViewID)
     {
         PhotonView foundView = PhotonView.Find(objectViewID);
-        if (foundView == null)
-        {
-            Debug.LogError("PhotonView bulunamadý: " + objectViewID);
-            return;
-        }
+        if (foundView == null) return;
 
         GameObject droppedObject = foundView.gameObject;
         Rigidbody droppedRigidbody = droppedObject.GetComponent<Rigidbody>();
@@ -193,8 +200,24 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         droppedObject.transform.SetParent(null);
         droppedObject.transform.rotation = Quaternion.identity;
 
-        heldObject = null;
+        // Sahipliði serbest býrak
+        if (foundView.IsMine)
+        {
+            foundView.TransferOwnership(0);
+        }
+
+        // **Envanterden sil**
+        inventory[selectedSlot] = null;
+
+        // **Eldeki nesneyi temizle**
+        if (heldObject == droppedObject)
+        {
+            heldObject = null;
+        }
+
+        Debug.Log("Nesne býrakýldý: " + droppedObject.name);
     }
+
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
