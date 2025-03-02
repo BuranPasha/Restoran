@@ -14,6 +14,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
     public float gravity = -9.81f;
     public float lookSpeed = 2f;
 
+    public float sprintFov = 80f; // Koþarken FOV deðeri
+    public float normalFov = 60f; // Normal FOV deðeri
+
     private float currentSpeed;
     private Vector3 velocity;
     private bool isCrouching = false;
@@ -46,6 +49,9 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
         // Baþlangýçta fareyi gizle ve kilitle
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // Kamera FOV baþlangýcý
+        playerCamera.fieldOfView = normalFov; // Normal FOV deðeri ile baþla
     }
 
     void Update()
@@ -75,6 +81,16 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
             {
                 TrySitOnChair();
             }
+        }
+
+        // Koþarken FOV'yi deðiþtir
+        if (Input.GetKey(KeyCode.LeftShift) && !isCrouching)
+        {
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, sprintFov, Time.deltaTime * 5f); // FOV deðiþimi
+        }
+        else
+        {
+            playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, normalFov, Time.deltaTime * 5f); // Normal FOV'ye dönüþ
         }
     }
 
@@ -112,8 +128,6 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
 
         characterController.Move((moveVelocity + velocity) * Time.deltaTime);
     }
-
-
 
     void Jump()
     {
