@@ -375,7 +375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74b702a78d80ebf479a8fbd445335af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterController: {fileID: 0}
+  characterController: {fileID: 7956171367982012960}
   playerCamera: {fileID: 7389575752071842261}
   speed: 4
   sprintSpeed: 7
