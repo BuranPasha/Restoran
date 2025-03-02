@@ -6,12 +6,9 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     public float interactionDistance = 3f;
     public Transform holdPosition;
     public string leftPositionTag = "LeftPosition"; // Býrakma noktasýnýn etiketi
-
     private GameObject heldObject = null;
     private Rigidbody heldRigidbody;
     private PhotonView heldObjectPhotonView;
-
-    private GameObject[] inventory = new GameObject[5]; // 5 slotlu envanter
 
     void Update()
     {
@@ -31,21 +28,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
                     TryDropOrPlace();
                 }
             }
-
-            // Envantere ekleme (R tuþu ile elindekini envantere koy)
-            if (Input.GetKeyDown(KeyCode.R) && heldObject != null)
-            {
-                StoreItemInInventory();
-            }
-
-            // Envanterden nesne alma (1-5 tuþlarý)
-            for (int i = 0; i < inventory.Length; i++)
-            {
-                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-                {
-                    RetrieveItemFromInventory(i);
-                }
-            }
         }
     }
 
@@ -58,6 +40,7 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         {
             GameObject objectToPickUp = hit.collider.gameObject;
 
+            // Sadece "Pickable" tag'ine sahip nesneleri al
             if (!objectToPickUp.CompareTag("Pickable"))
             {
                 Debug.Log("Bu nesne alýnamaz: " + objectToPickUp.name);
@@ -72,6 +55,7 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
                 return;
             }
 
+            // Sahipliði transfer etmeden önce kontrol et
             if (!objectPhotonView.IsMine)
             {
                 objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
@@ -92,36 +76,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             DropObject();
-        }
-    }
-
-    void StoreItemInInventory()
-    {
-        for (int i = 0; i < inventory.Length; i++)
-        {
-            if (inventory[i] == null) // Boþ slot bulursa
-            {
-                inventory[i] = heldObject;
-                heldObject.SetActive(false); // Envantere alýnan objeyi gizle
-                heldObject = null;
-                heldObjectPhotonView = null;
-                heldRigidbody = null;
-                Debug.Log("Nesne envantere eklendi: Slot " + (i + 1));
-                return;
-            }
-        }
-        Debug.Log("Envanter dolu!");
-    }
-
-    void RetrieveItemFromInventory(int slotIndex)
-    {
-        if (inventory[slotIndex] != null && heldObject == null) // Slot doluysa ve elimizde nesne yoksa
-        {
-            heldObject = inventory[slotIndex];
-            inventory[slotIndex] = null;
-            heldObject.SetActive(true); // Objeyi tekrar görünür yap
-            photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, heldObject.GetComponent<PhotonView>().ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
-            Debug.Log("Nesne eline alýndý: Slot " + (slotIndex + 1));
         }
     }
 
@@ -151,12 +105,51 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         {
             heldRigidbody.isKinematic = true;
             heldRigidbody.useGravity = false;
-            heldRigidbody.freezeRotation = true;
+            heldRigidbody.freezeRotation = true; // Dönmeyi engelle
         }
 
         heldObject.transform.SetParent(holdPosition);
         heldObject.transform.localPosition = Vector3.zero;
         heldObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
+
+        // Item piþirme durumunu duraklat
+        Item itemComponent = heldObject.GetComponent<Item>();
+        if (itemComponent != null)
+        {
+            itemComponent.PauseCooking();
+        }
+    }
+
+    [PunRPC]
+    void RPC_PlaceOnLeftPosition(int objectViewID, Vector3 position)
+    {
+        PhotonView foundView = PhotonView.Find(objectViewID);
+        if (foundView == null)
+        {
+            Debug.LogError("PhotonView bulunamadý: " + objectViewID);
+            return;
+        }
+
+        GameObject objectToPlace = foundView.gameObject;
+        objectToPlace.transform.SetParent(null);
+        objectToPlace.transform.position = position;
+        objectToPlace.transform.rotation = Quaternion.identity; // Rotasyonu sýfýrla
+
+        Rigidbody rb = objectToPlace.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true; // Sabit konumda kalmasý için
+            rb.freezeRotation = true; // Dönmeyi engelle
+        }
+
+        // Item piþirme durumunu yeniden aktive et
+        Item itemComponent = objectToPlace.GetComponent<Item>();
+        if (itemComponent != null)
+        {
+            itemComponent.ResumeCooking();
+        }
+
+        heldObject = null;
     }
 
     void DropObject()
@@ -165,7 +158,9 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
         if (heldObjectPhotonView != null && heldObjectPhotonView.IsMine)
         {
+            // Sahipliði MasterClient'a ver (sahipsiz gibi davranmasý için)
             heldObjectPhotonView.TransferOwnership(PhotonNetwork.MasterClient);
+            Debug.Log("Nesne býrakýldý ve MasterClient'a devredildi: " + heldObject.name);
         }
 
         photonView.RPC("RPC_DropObject", RpcTarget.AllBuffered, heldObjectPhotonView.ViewID);
@@ -191,9 +186,16 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         droppedObject.transform.SetParent(null);
-        droppedObject.transform.rotation = Quaternion.identity;
+        droppedObject.transform.rotation = Quaternion.identity; // Rotasyonu sýfýrla
+
+        // Sahipliði serbest býrak
+        if (foundView.IsMine)
+        {
+            foundView.TransferOwnership(0); // Sahipsiz yap
+        }
 
         heldObject = null;
+        Debug.Log("Nesne býrakýldý: " + droppedObject.name);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
