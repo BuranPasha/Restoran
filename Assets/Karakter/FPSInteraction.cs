@@ -14,6 +14,13 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     private Rigidbody heldRigidbody;
     private PhotonView heldObjectPhotonView;
 
+    private Stove stove; // Ocak referansý
+
+    void Start()
+    {
+        stove = FindFirstObjectByType<Stove>(); // Ocak nesnesini bul
+    }
+
     void Update()
     {
         if (!photonView.IsMine) return;
@@ -131,6 +138,12 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         heldObject.transform.SetParent(holdPosition);
         heldObject.transform.localPosition = Vector3.zero;
         heldObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
+
+        Item itemComponent = heldObject.GetComponent<Item>();
+        if (itemComponent != null)
+        {
+            itemComponent.PauseCooking();
+        }
     }
 
     // Nesneyi bir yere koyma (E tuþu)
@@ -165,6 +178,15 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
         heldObject = null;
         inventory[selectedSlot] = null;
+
+        // Eðer piþirilebilir bir þeyse, piþirmeyi baþlat
+        Item itemComponent = objectToPlace.GetComponent<Item>();
+        if (itemComponent != null)
+        {
+            itemComponent.ResumeCooking();
+        }
+
+        heldObject = null;
     }
 
     // Nesneyi yere býrakma (G tuþu)
