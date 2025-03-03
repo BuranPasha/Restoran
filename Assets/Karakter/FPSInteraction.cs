@@ -32,13 +32,18 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
             {
                 TryPickUp();
             }
+            else
+            {
+                TryPlaceObject(); // E tuþuyla bir yere koyma
+            }
         }
+
         // Nesne býrakma
-        else if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(KeyCode.G))
         {
             if (heldObject != null)
             {
-                TryDropOrPlace();
+                TryDropObject(); // G tuþuyla yere býrakma
             }
         }
     }
@@ -128,7 +133,8 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         heldObject.transform.localRotation = Quaternion.Euler(0, 90, 0);
     }
 
-    void TryDropOrPlace()
+    // Nesneyi bir yere koyma (E tuþu)
+    void TryPlaceObject()
     {
         if (heldObject == null) return;
 
@@ -136,10 +142,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         if (leftPosition != null && Vector3.Distance(transform.position, leftPosition.transform.position) <= interactionDistance)
         {
             photonView.RPC("RPC_PlaceOnLeftPosition", RpcTarget.AllBuffered, heldObject.GetComponent<PhotonView>().ViewID, leftPosition.transform.position);
-        }
-        else
-        {
-            DropObject();
         }
     }
 
@@ -165,7 +167,8 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         inventory[selectedSlot] = null;
     }
 
-    void DropObject()
+    // Nesneyi yere býrakma (G tuþu)
+    void TryDropObject()
     {
         if (inventory[selectedSlot] == null) return; // Eðer seçili slot boþsa çýk
 
@@ -180,7 +183,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
         photonView.RPC("RPC_DropObject", RpcTarget.AllBuffered, objectPhotonView.ViewID);
     }
-
 
     [PunRPC]
     void RPC_DropObject(int objectViewID)
@@ -217,7 +219,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
 
         Debug.Log("Nesne býrakýldý: " + droppedObject.name);
     }
-
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

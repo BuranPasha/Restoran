@@ -11,6 +11,7 @@ TagManager:
   - NoPickup
   - Door
   - Tray
+  - Pan
   layers:
   - Default
   - TransparentFX
