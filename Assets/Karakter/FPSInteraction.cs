@@ -13,8 +13,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
     private GameObject heldObject = null;
     private Rigidbody heldRigidbody;
     private PhotonView heldObjectPhotonView;
-    private Tray heldTray = null; // Oyuncunun taþýdýðý tepsi
-
 
     private Stove stove; // Ocak referansý
 
@@ -46,40 +44,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
                 TryPlaceObject(); // E tuþuyla bir yere koyma
             }
         }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (heldTray != null)
-            {
-                heldTray.TryPickUpItem(); // Tepsiye item eklemeye çalýþ
-            }
-            else if (heldObject == null)
-            {
-                TryPickUp();
-            }
-            else
-            {
-                TryPlaceObject();
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            if (heldTray != null)
-            {
-                heldTray.DropItem();
-                if (heldTray.IsEmpty()) // Eðer tepsi tamamen boþaldýysa, tepsiyi de býrak
-                {
-                    DropTray();
-                }
-            }
-            else if (heldObject != null)
-            {
-                TryDropObject();
-            }
-        }
-
-
 
         // Nesne býrakma
         if (Input.GetKeyDown(KeyCode.G))
@@ -117,68 +81,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    void TryPickUpTray(GameObject trayObject)
-    {
-        PhotonView trayPhotonView = trayObject.GetComponent<PhotonView>();
-        if (trayPhotonView == null) return;
-
-        if (!trayPhotonView.IsMine)
-        {
-            trayPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
-        }
-
-        heldTray = trayObject.GetComponent<Tray>();
-        if (heldTray != null)
-        {
-            photonView.RPC("RPC_PickUpTray", RpcTarget.AllBuffered, trayPhotonView.ViewID);
-        }
-    }
-
-    [PunRPC]
-    void RPC_PickUpTray(int trayViewID)
-    {
-        PhotonView trayView = PhotonView.Find(trayViewID);
-        if (trayView == null) return;
-
-        GameObject trayObject = trayView.gameObject;
-        heldTray = trayObject.GetComponent<Tray>();
-
-        trayObject.transform.SetParent(holdPosition);
-        trayObject.transform.localPosition = Vector3.zero;
-        trayObject.transform.localRotation = Quaternion.identity;
-
-        Rigidbody rb = trayObject.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = true;
-        }
-    }
-
-    void DropTray()
-    {
-        if (heldTray == null) return;
-
-        photonView.RPC("RPC_DropTray", RpcTarget.AllBuffered, heldTray.photonView.ViewID);
-    }
-
-    [PunRPC]
-    void RPC_DropTray(int trayViewID)
-    {
-        PhotonView trayView = PhotonView.Find(trayViewID);
-        if (trayView == null) return;
-
-        GameObject trayObject = trayView.gameObject;
-        trayObject.transform.SetParent(null);
-
-        Rigidbody rb = trayObject.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = false;
-        }
-
-        heldTray = null;
-    }
-
     void TryPickUp()
     {
         RaycastHit hit;
@@ -188,25 +90,19 @@ public class FPSInteraction : MonoBehaviourPunCallbacks, IPunObservable
         {
             GameObject objectToPickUp = hit.collider.gameObject;
 
-            if (objectToPickUp.CompareTag("Pickable"))
-            {
-                PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
-                if (objectPhotonView == null) return;
+            if (!objectToPickUp.CompareTag("Pickable")) return;
 
-                if (!objectPhotonView.IsMine)
-                {
-                    objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
-                }
+            PhotonView objectPhotonView = objectToPickUp.GetComponent<PhotonView>();
+            if (objectPhotonView == null) return;
 
-                photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objectPhotonView.ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
-            }
-            else if (objectToPickUp.CompareTag("Tray")) // Tepsiyi al
+            if (!objectPhotonView.IsMine)
             {
-                TryPickUpTray(objectToPickUp);
+                objectPhotonView.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
+
+            photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objectPhotonView.ViewID, PhotonNetwork.LocalPlayer.ActorNumber);
         }
     }
-
 
     [PunRPC]
     void RPC_PickUpObject(int objectViewID, int ownerActorNumber)
