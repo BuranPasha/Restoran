@@ -992,7 +992,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3d8daa3981f9c924d91befe5db77015b, type: 3}
       propertyPath: m_Name
-      value: hamburger ekmek alt
+      value: "\xC7atal"
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 3d8daa3981f9c924d91befe5db77015b, type: 3}
       propertyPath: m_TagString
@@ -1019,7 +1019,7 @@ PrefabInstance:
       addedObject: {fileID: 743123278}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3d8daa3981f9c924d91befe5db77015b, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 743123283}
+      addedObject: {fileID: 743123287}
   m_SourcePrefab: {fileID: 100100000, guid: 3d8daa3981f9c924d91befe5db77015b, type: 3}
 --- !u!1 &410087039
 GameObject:
@@ -1676,7 +1676,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &743123283
+--- !u!114 &743123287
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1685,10 +1685,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 743123274}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f98deed391f39648beda33ae60a09a6, type: 3}
+  m_Script: {fileID: 11500000, guid: 3b271633508184841a3506d06a5dafee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: fd47c8b4ebfbd4339858d4d23f587519, type: 3}
+  itemType: 4
 --- !u!1 &791845422 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: d40f3021e1a1a144a9e7f21c2d64126e, type: 3}
@@ -1723,7 +1723,7 @@ GameObject:
   m_Component:
   - component: {fileID: 820204153}
   m_Layer: 0
-  m_Name: GameObject (1)
+  m_Name: "Ka\u015F\u0131kSlot"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1738,7 +1738,7 @@ Transform:
   m_GameObject: {fileID: 820204152}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.608, y: 0, z: -0.081652}
+  m_LocalPosition: {x: 0.092, y: 0, z: -0.355}
   m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2501,7 +2501,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
       propertyPath: m_TagString
-      value: Pickable
+      value: Tray
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2518,6 +2518,15 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2035493488}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 981194783}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1357958718}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1513280514}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8966a28d52cc96541b285d00082dd1a2, type: 3}
       insertIndex: -1
@@ -2639,7 +2648,7 @@ GameObject:
   m_Component:
   - component: {fileID: 958573466}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: "\xC7atalSlot"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2654,7 +2663,38 @@ Transform:
   m_GameObject: {fileID: 958573465}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.027194817, y: 0, z: 0.653}
+  m_LocalPosition: {x: 0.027194817, y: 0, z: 0.307}
+  m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 933305824}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &981194782
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 981194783}
+  m_Layer: 0
+  m_Name: "Tatl\u0131Slot"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &981194783
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 981194782}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.027194817, y: 0, z: 0.654}
   m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2902,7 +2942,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f98deed391f39648beda33ae60a09a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: 936345f7fc3934efa8119a8700d904c7, type: 3}
 --- !u!1 &1109367435
 GameObject:
   m_ObjectHideFlags: 0
@@ -3192,7 +3231,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f98deed391f39648beda33ae60a09a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: 936345f7fc3934efa8119a8700d904c7, type: 3}
+--- !u!114 &1126615335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1126615322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b271633508184841a3506d06a5dafee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemType: 5
 --- !u!1 &1248672009 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 17dabc51106f8fe4794fb6ba5ff11a4a, type: 3}
@@ -3314,7 +3365,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f98deed391f39648beda33ae60a09a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 0}
 --- !u!1 &1306263886
 GameObject:
   m_ObjectHideFlags: 0
@@ -3325,7 +3375,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1306263887}
   m_Layer: 0
-  m_Name: GameObject (2)
+  m_Name: "B\u0131\xE7akSlot"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3340,7 +3390,7 @@ Transform:
   m_GameObject: {fileID: 1306263886}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.661, y: 0, z: -0.081652}
+  m_LocalPosition: {x: -0.01, y: 0, z: -0.01}
   m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3536,7 +3586,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f98deed391f39648beda33ae60a09a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 0}
+--- !u!1 &1357958717
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1357958718}
+  m_Layer: 0
+  m_Name: SalataSlot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1357958718
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1357958717}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.799, y: 0, z: -0.021}
+  m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 933305824}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1377334553 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fe87f9b0a9f7fac49ac08051b9bbbf69, type: 3}
@@ -3658,7 +3738,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f98deed391f39648beda33ae60a09a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSprite: {fileID: 0}
+--- !u!114 &1377334566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377334553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b271633508184841a3506d06a5dafee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemType: 0
 --- !u!1 &1494915345
 GameObject:
   m_ObjectHideFlags: 0
@@ -3791,6 +3883,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1513280513
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1513280514}
+  m_Layer: 0
+  m_Name: "\u0130\xE7ecekSlot"
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1513280514
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513280513}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.76, y: 0, z: -0.074}
+  m_LocalScale: {x: 3.3333333, y: 154.05313, z: 3.3333333}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 933305824}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1568124098
 GameObject:
   m_ObjectHideFlags: 0
@@ -4270,7 +4393,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d2dc213d4bcf8764784158f8e38a3dd1, type: 3}
       propertyPath: m_Name
-      value: "hamburger k\xF6fte"
+      value: "Ka\u015F\u0131k"
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d2dc213d4bcf8764784158f8e38a3dd1, type: 3}
       propertyPath: m_TagString
@@ -4298,6 +4421,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d2dc213d4bcf8764784158f8e38a3dd1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1126615331}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d2dc213d4bcf8764784158f8e38a3dd1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1126615335}
   m_SourcePrefab: {fileID: 100100000, guid: d2dc213d4bcf8764784158f8e38a3dd1, type: 3}
 --- !u!1 &1832533972 stripped
 GameObject:
@@ -5012,7 +5138,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2035493488}
   m_Layer: 0
-  m_Name: GameObject (3)
+  m_Name: YemekSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5270,7 +5396,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fe87f9b0a9f7fac49ac08051b9bbbf69, type: 3}
       propertyPath: m_Name
-      value: hamburger peynir
+      value: Yemek
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fe87f9b0a9f7fac49ac08051b9bbbf69, type: 3}
       propertyPath: m_TagString
@@ -5298,6 +5424,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fe87f9b0a9f7fac49ac08051b9bbbf69, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1377334562}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: fe87f9b0a9f7fac49ac08051b9bbbf69, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1377334566}
   m_SourcePrefab: {fileID: 100100000, guid: fe87f9b0a9f7fac49ac08051b9bbbf69, type: 3}
 --- !u!1 &2147228140
 GameObject:

@@ -312,6 +312,7 @@ GameObject:
   - component: {fileID: 4444051092395864061}
   - component: {fileID: 7956171367982012960}
   - component: {fileID: 3654650429537341618}
+  - component: {fileID: -6081807636097162747}
   m_Layer: 0
   m_Name: FPS_Player
   m_TagString: Player
@@ -518,3 +519,18 @@ MonoBehaviour:
   interactionDistance: 2
   holdPosition: {fileID: 3816328514633793554}
   leftPositionTag: LeftPosition
+--- !u!114 &-6081807636097162747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8015794530535138952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9fbce7d01bbd514da3ca545f1568cb0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holdPosition: {fileID: 3816328514633793554}
+  trayTag: Tray
+  interactionDistance: 3
