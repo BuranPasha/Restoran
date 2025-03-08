@@ -28,17 +28,25 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (heldTray == null)
-                TryPickUpTray(); // Tepsiyi al
+                TryPickUpTray();
         }
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            TryPlaceItemOnTray(); // Öðeyi tepsiye koy
+            TryPlaceItemOnTray();
         }
 
         if (Input.GetKeyDown(KeyCode.G))
         {
-            TryDropItemFromTray(); // Tepsiden sýrayla býrak
+            TryDropItemFromTray();
+        }
+
+        if (Input.GetKey(KeyCode.E)) // E'ye basýlý tutulduðunda masa ile etkileþim
+        {
+            if (heldTray != null)
+            {
+                TryPlaceOrCollectItems();
+            }
         }
     }
 
@@ -137,7 +145,6 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
         GameObject item = itemView.gameObject;
         traySlots[slotName] = item;
 
-        // Öðeyi doðru slot'a yerleþtirmek için, öðe ismine göre doðru pozisyona taþýyoruz
         Transform targetSlot = GetSlotTransform(slotName);
         if (targetSlot != null)
         {
@@ -187,13 +194,108 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
         }
     }
 
-    // Slot adýyla uyumlu olan doðru transform'u döndüren metot
     Transform GetSlotTransform(string slotName)
     {
-        // Burada her bir slot'un transform referansýný döndürmelisiniz.
-        // Örneðin, "Salata" slotu için 'SalataSlot' adýnda bir transform varsa:
         Transform slotTransform = GameObject.Find(slotName + "Slot")?.transform;
-
         return slotTransform;
+    }
+
+    void TryPlaceOrCollectItems()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, interactionDistance))
+        {
+            TableScript table = hit.collider.GetComponent<TableScript>();
+            if (table == null) return;
+
+            PhotonView tableView = table.GetComponent<PhotonView>();
+            if (tableView == null) return;
+
+            if (!tableView.IsMine)
+                tableView.TransferOwnership(PhotonNetwork.LocalPlayer);
+
+            if (!table.HasItemsOnTable())
+            {
+                PlaceItemsOnTable(tableView);
+            }
+            else
+            {
+                CollectItemsFromTable(tableView);
+            }
+        }
+    }
+
+    void PlaceItemsOnTable(PhotonView tableView)
+    {
+        List<int> itemViewIDs = new List<int>();
+
+        foreach (string slot in slotNames)
+        {
+            if (traySlots[slot] != null)
+            {
+                itemViewIDs.Add(traySlots[slot].GetComponent<PhotonView>().ViewID);
+                traySlots[slot] = null;
+            }
+            else
+            {
+                itemViewIDs.Add(-1); // Boþ slotlarý belirlemek için
+            }
+        }
+
+        tableView.RPC("RPC_PlaceItemsFromTray", RpcTarget.AllBuffered, itemViewIDs.ToArray());
+    }
+
+    void CollectItemsFromTable(PhotonView tableView)
+    {
+        tableView.RPC("RPC_CollectItemsToTray", RpcTarget.AllBuffered, heldTray.GetComponent<PhotonView>().ViewID);
+    }
+
+    [PunRPC]
+    void RPC_CollectItemsToTray(int trayViewID)
+    {
+        PhotonView trayView = PhotonView.Find(trayViewID);
+        if (trayView == null) return;
+
+        GameObject tray = trayView.gameObject;
+        tray.transform.SetParent(heldTray.transform);
+        tray.transform.localPosition = Vector3.zero;
+        tray.transform.localRotation = Quaternion.identity;
+        tray.transform.localScale = Vector3.one; // Scale bozulmasýný engelle
+
+        Rigidbody rb = tray.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+        }
+
+        // Masadaki item'leri tepsiye al
+        for (int i = 0; i < slotNames.Length; i++)
+        {
+            if (traySlots[slotNames[i]] != null)
+            {
+                PlaceItemBackOnTray(traySlots[slotNames[i]]);
+                traySlots[slotNames[i]] = null; // Slotu boþalt
+            }
+        }
+    }
+
+
+
+    public void PlaceItemBackOnTray(GameObject item)
+    {
+        ItemScript itemScript = item.GetComponent<ItemScript>();
+        if (itemScript == null) return;
+
+        string itemType = itemScript.GetItemSlotName();
+        if (traySlots[itemType] != null) return;
+
+        traySlots[itemType] = item;
+        item.transform.SetParent(heldTray.transform);
+        item.transform.localPosition = Vector3.zero;
+        item.transform.localRotation = Quaternion.identity;
+        item.transform.localScale = Vector3.one; // Scale bozulmasýný engelle
+
+        Rigidbody rb = item.GetComponent<Rigidbody>();
+        if (rb != null) rb.isKinematic = true;
     }
 }

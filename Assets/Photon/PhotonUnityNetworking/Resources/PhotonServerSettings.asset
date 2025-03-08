@@ -74,6 +74,9 @@ MonoBehaviour:
   - RPC_SetItemOnTray
   - RPC_DropItemFromTray
   - RPC_DropTray
+  - RPC_CollectItemsToTray
+  - RPC_PlaceItemsFromTray
+  - RPC_PlaceItemsOnTable
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

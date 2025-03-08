@@ -206,12 +206,12 @@ public class PlayerMovement : MonoBehaviourPunCallbacks
                 }
                 else
                 {
-                    Debug.Log("Sandalyeye oturulamýyor. Chair scripti yok veya sitPoint atanmadý.");
+                    
                 }
             }
             else
             {
-                Debug.Log("Raycast sandalyeyi görmüyor.");
+                
             }
         }
     }
