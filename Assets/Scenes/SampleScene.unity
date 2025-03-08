@@ -1713,6 +1713,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: d40f3021e1a1a144a9e7f21c2d64126e, type: 3}
   m_PrefabInstance: {fileID: 831370525}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &795788362
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10.64
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.62
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 7.4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 385d925482f1d60499700882a406586f, type: 3}
+      propertyPath: m_Name
+      value: "Buz dolab\u0131 \xE7ekmece"
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 385d925482f1d60499700882a406586f, type: 3}
 --- !u!1 &820204152
 GameObject:
   m_ObjectHideFlags: 0
@@ -3751,6 +3808,120 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemType: 0
+--- !u!1001 &1402037838
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.035638
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.87
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.74
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_Name
+      value: "Buz dolab\u0131 orta kapak"
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+--- !u!1001 &1431250684
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.4573345
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.34
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
+      propertyPath: m_Name
+      value: "Buz dolab\u0131 \xFCst"
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
 --- !u!1 &1494915345
 GameObject:
   m_ObjectHideFlags: 0
@@ -4535,6 +4706,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 541233806}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1862233660
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -12.287619
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.47
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.6732965
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
+      propertyPath: m_Name
+      value: "Buz dolab\u0131 orta"
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
 --- !u!1001 &1873384479
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4675,6 +4903,63 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 53cb4db62c241fc4dbfdb7d586325cd9, type: 3}
+--- !u!1001 &1939462481
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.214467
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.65
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 3.81
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_Name
+      value: "Buz dolab\u0131 \xFCst kapak"
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
 --- !u!1 &1951587438
 GameObject:
   m_ObjectHideFlags: 0
@@ -5513,3 +5798,8 @@ SceneRoots:
   - {fileID: 80687779}
   - {fileID: 930421791}
   - {fileID: 933305813}
+  - {fileID: 1862233660}
+  - {fileID: 1402037838}
+  - {fileID: 795788362}
+  - {fileID: 1431250684}
+  - {fileID: 1939462481}
