@@ -148,9 +148,17 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
         Transform targetSlot = GetSlotTransform(slotName);
         if (targetSlot != null)
         {
-            item.transform.SetParent(targetSlot);
+            Vector3 originalGlobalScale = item.transform.lossyScale; // Global ölçeði kaydet
+            item.transform.SetParent(targetSlot, true); // True: Global transform'u korur
             item.transform.localPosition = Vector3.zero;
             item.transform.localRotation = Quaternion.identity;
+
+            // Global ölçeði tekrar uygula
+            item.transform.localScale = new Vector3(
+                originalGlobalScale.x / item.transform.lossyScale.x * item.transform.localScale.x,
+                originalGlobalScale.y / item.transform.lossyScale.y * item.transform.localScale.y,
+                originalGlobalScale.z / item.transform.lossyScale.z * item.transform.localScale.z
+            );
         }
 
         Rigidbody rb = item.GetComponent<Rigidbody>();
@@ -159,6 +167,8 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
             rb.isKinematic = true;
         }
     }
+
+
 
     void TryDropItemFromTray()
     {
@@ -290,12 +300,14 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
         if (traySlots[itemType] != null) return;
 
         traySlots[itemType] = item;
+        Vector3 originalScale = item.transform.localScale; // Orijinal ölçeði kaydet
         item.transform.SetParent(heldTray.transform);
         item.transform.localPosition = Vector3.zero;
         item.transform.localRotation = Quaternion.identity;
-        item.transform.localScale = Vector3.one; // Scale bozulmasýný engelle
+        item.transform.localScale = originalScale; // Orijinal ölçeði geri yükle
 
         Rigidbody rb = item.GetComponent<Rigidbody>();
         if (rb != null) rb.isKinematic = true;
     }
+
 }

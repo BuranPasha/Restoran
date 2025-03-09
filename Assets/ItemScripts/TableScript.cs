@@ -51,7 +51,7 @@ public class TableScript : MonoBehaviourPun
                 if (slotDictionary.ContainsKey(itemType))
                 {
                     Transform targetSlot = slotDictionary[itemType];
-                    item.transform.SetParent(targetSlot);
+                    item.transform.SetParent(targetSlot, worldPositionStays: true);
                     item.transform.localPosition = Vector3.zero;
                     item.transform.localRotation = Quaternion.identity;
 
@@ -61,6 +61,33 @@ public class TableScript : MonoBehaviourPun
             }
         }
     }
+
+    [PunRPC]
+    public void RPC_CollectItemsToTray(int trayViewID)
+    {
+        PhotonView trayView = PhotonView.Find(trayViewID);
+        if (trayView == null) return;
+
+        GameObject tray = trayView.gameObject;
+        WaiterSystem waiter = PhotonView.Find(trayViewID).GetComponent<WaiterSystem>();
+
+        if (waiter == null) return;
+
+        foreach (var slot in slotDictionary)
+        {
+            if (slot.Value.childCount > 0)
+            {
+                Transform itemTransform = slot.Value.GetChild(0);
+                PhotonView itemView = itemTransform.GetComponent<PhotonView>();
+                if (itemView != null)
+                {
+                    waiter.photonView.RPC("RPC_PlaceItemOnTray", RpcTarget.AllBuffered, itemView.ViewID, slot.Key);
+                }
+            }
+        }
+    }
+
+
 
     public bool HasItemsOnTable()
     {
