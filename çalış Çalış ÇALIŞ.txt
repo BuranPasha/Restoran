@@ -1,0 +1,93 @@
+Pazardan pazara 
+
+Burhan
+
+9-16 mart
+
+Ocak - pişirme eldiveni - tava - zeytin yağ plastik  - alev - zeytin yağ teneke - teneke içecek - çatal - kaşıl - Masa + para
+
+16-23 mart
+
+Sebzeler - Meyveler - Değişik biçimde etler - Tuz - baharatlar - Soslar - tarif kitabı
+
+23-30 mart
+
+genel mutfak
+
+30-6 nisan
+
+genel restoran restoran iç dizayn
+
+6-13 nisan 
+
+genel restoran restoran iç dizayn
+
+13-20 nisan
+
+dış çevre yapıları + araç
+
+20-27 nisan
+
+dış çevre yapıları + araç
+
+27-4 mayıs
+
+npcler için başlangıç
+
+4-11 mayıs
+
+npcler için bitiş + kendi karakterimiz
+
+11-18 mayıs 
+
+cila + uı
+
+Demo çıkış tarihi 18 Mayıs
+
+
+Ali kan
+Mustafa
+
+9-16 mart
+
+Buz dolabı - spawn - para
+
+16-23 mart
+
+birleştirme - tarif sistemi
+
+23-30 mart
+
+tarif sistemi - mutfak araç gereçleri kullanımı
+
+30-6 nisan
+
+restoran düzenleme + mobilya satın alma
+
+6-13 nisan
+
+cep telefonu + sosyal medya? + haber manşetleri yazın
+ 
+13-20 nisan
+
+bug fix - ai başlangıç - şehir kalabalığı ( etrafta dolaşan rastgele npcler)
+
+20-27 nisan
+
+bug fix - ai başlangıç - şehir kalabalığı ( etrafta dolaşan rastgele npcler)
+
+27-4 mayıs
+
+oyuncu için oyun içi düzenlemeler - (gün zorluğu leveli) - yıldız sistemi
+
+4-11 mayıs
+
+karakter için dizayn satın alma menüsü + değişik npc
+
+11-18 mayıs 
+
+bug fix + ana menü
+
+Demo çıkış tarihi 18 Mayıs
+
+ 
