@@ -81,6 +81,8 @@ MonoBehaviour:
   - OpenFridge
   - CloseFreezer
   - OpenFreezer
+  - RPC_AddItem
+  - RPC_RemoveItem
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
