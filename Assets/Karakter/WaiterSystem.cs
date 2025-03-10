@@ -124,7 +124,11 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
             if (itemScript == null) return;
 
             string itemName = itemScript.GetItemSlotName();
-            if (itemName == null || traySlots[itemName] != null) return; // Boþ bir slot yoksa ekleme
+            if (itemName == null || traySlots.ContainsKey(itemName) && traySlots[itemName] != null)
+            {
+                Debug.Log("Bu slot zaten dolu!"); // Uyarý mesajý ver
+                return; // Slot doluysa ekleme yapma
+            }
 
             PhotonView itemView = item.GetComponent<PhotonView>();
             if (itemView == null) return;
@@ -136,6 +140,7 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
         }
     }
 
+
     [PunRPC]
     void RPC_PlaceItemOnTray(int itemViewID, string slotName)
     {
@@ -145,15 +150,19 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
         GameObject item = itemView.gameObject;
         traySlots[slotName] = item;
 
+        // Global scale'i kaydediyoruz
+        Vector3 originalGlobalScale = item.transform.lossyScale;
+
+        // Slot'a yerleþtirme
         Transform targetSlot = GetSlotTransform(slotName);
         if (targetSlot != null)
         {
-            Vector3 originalGlobalScale = item.transform.lossyScale; // Global ölçeði kaydet
-            item.transform.SetParent(targetSlot, true); // True: Global transform'u korur
+            // Global scale'i tekrar uygulamak için yerel transform'u ayarlýyoruz
+            item.transform.SetParent(targetSlot, true); // 'true' ile global transform'u koruyoruz
             item.transform.localPosition = Vector3.zero;
             item.transform.localRotation = Quaternion.identity;
 
-            // Global ölçeði tekrar uygula
+            // Global scale'i koruyarak yerel scale'i yeniden ayarlýyoruz
             item.transform.localScale = new Vector3(
                 originalGlobalScale.x / item.transform.lossyScale.x * item.transform.localScale.x,
                 originalGlobalScale.y / item.transform.lossyScale.y * item.transform.localScale.y,
@@ -167,6 +176,7 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
             rb.isKinematic = true;
         }
     }
+
 
 
 
@@ -259,6 +269,8 @@ public class WaiterSystem : MonoBehaviourPunCallbacks
     {
         tableView.RPC("RPC_CollectItemsToTray", RpcTarget.AllBuffered, heldTray.GetComponent<PhotonView>().ViewID);
     }
+
+
 
     [PunRPC]
     void RPC_CollectItemsToTray(int trayViewID)

@@ -51,9 +51,26 @@ public class TableScript : MonoBehaviourPun
                 if (slotDictionary.ContainsKey(itemType))
                 {
                     Transform targetSlot = slotDictionary[itemType];
+                    // Item'ýn global ölçeðini kaydediyoruz
+                    Vector3 originalGlobalScale = item.transform.lossyScale;
+
+                    // Item'ý slot'a yerleþtiriyoruz
                     item.transform.SetParent(targetSlot, worldPositionStays: true);
                     item.transform.localPosition = Vector3.zero;
                     item.transform.localRotation = Quaternion.identity;
+
+                    // Global ölçeði yerel ölçeðe dönüþtürüp uyguluyoruz
+                    Vector3 scaleFactor = new Vector3(
+                         originalGlobalScale.x / item.transform.lossyScale.x,
+                         originalGlobalScale.y / item.transform.lossyScale.y,
+                         originalGlobalScale.z / item.transform.lossyScale.z
+);
+
+                    item.transform.localScale = new Vector3(
+                        item.transform.localScale.x * scaleFactor.x,
+                        item.transform.localScale.y * scaleFactor.y,
+                        item.transform.localScale.z * scaleFactor.z
+                    );
 
                     Rigidbody rb = item.GetComponent<Rigidbody>();
                     if (rb != null) rb.isKinematic = true;
@@ -61,6 +78,7 @@ public class TableScript : MonoBehaviourPun
             }
         }
     }
+
 
     [PunRPC]
     public void RPC_CollectItemsToTray(int trayViewID)
