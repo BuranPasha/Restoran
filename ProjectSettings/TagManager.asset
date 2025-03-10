@@ -12,6 +12,8 @@ TagManager:
   - Door
   - Tray
   - Pan
+  - Freezer
+  - Fridge
   layers:
   - Default
   - TransparentFX
