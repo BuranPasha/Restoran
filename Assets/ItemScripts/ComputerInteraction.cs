@@ -1,12 +1,12 @@
 using UnityEngine;
 using Photon.Pun;
-using UnityEngine.UI;
 
 public class ComputerInteraction : MonoBehaviour
 {
     public GameObject computerUI; // Bilgisayar UI'sý
     public Transform sitPosition; // Bilgisayarýn önünde oturulacak pozisyon
     public Transform computerScreenView; // Kameranýn bilgisayar ekranýna bakacaðý pozisyon
+    public float interactionRange = 5f; // Raycast'in etkileþim mesafesi
 
     public GameObject sosyalMedyaPanel; // Sosyal Medya paneli
     public GameObject finansPanel; // Finans paneli
@@ -15,25 +15,19 @@ public class ComputerInteraction : MonoBehaviour
     private GameObject player; // Oyuncu objesi
     private Camera playerCamera; // Oyuncunun kamerasý
     private bool isUsingComputer = false; // Bilgisayar kullanýlýyor mu?
+    private RaycastHit hit; // Raycast'in vurduðu nesneyi saklamak için
+    private bool isInInteractionRange = false; // Oyuncu etkileþim mesafesinde mi?
+
     private Vector3 originalPlayerPosition; // Oyuncunun baþlangýç pozisyonu
     private Quaternion originalPlayerRotation; // Oyuncunun baþlangýç rotasý
     private Quaternion originalCameraRotation; // Kameranýn baþlangýç rotasý
 
-    // Oyuncunun eski boyutunu saklayacak deðiþken
-    private Vector3 originalPlayerScale;
-
     void Start()
     {
-        Debug.Log("Bilgisayar Script'i baþlatýldý!");
-
-        // Bilgisayar UI baþta kapalý olmalý
+        // Baþlangýçta bilgisayar UI'sý kapalý olmalý
         if (computerUI != null)
         {
             computerUI.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("computerUI atanmadý! Inspector'dan atayýn.");
         }
 
         // Panellerin baþlangýçta kapalý olmasý gerektiðini unutmayýn
@@ -83,16 +77,46 @@ public class ComputerInteraction : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E) && !isUsingComputer)
+        // Raycast ile bilgisayarýn etkileþim alanýna girip girmediðini kontrol et
+        CheckForComputerInteraction();
+
+        // Eðer oyuncu bilgisayarýn etkileþim alanýndaysa ve E tuþuna basýldýysa
+        if (isInInteractionRange && Input.GetKeyDown(KeyCode.E) && !isUsingComputer)
         {
-            Debug.Log("E tuþuna basýldý, bilgisayara oturuluyor...");
             UseComputer();
         }
 
+        // Eðer ESC tuþuna basýldýysa, bilgisayar kullanýmýný sonlandýr
         if (isUsingComputer && Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("ESC tuþuna basýldý, bilgisayardan çýkýlýyor...");
             ExitComputer();
+        }
+    }
+
+    void CheckForComputerInteraction()
+    {
+        if (playerCamera == null)
+        {
+            playerCamera = Camera.main; // Kamerayý bulma
+        }
+
+        // Raycast baþlat
+        Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition); // Kameradan ekrana doðru bir ýþýn gönder
+        if (Physics.Raycast(ray, out hit, interactionRange))
+        {
+            if (hit.collider.CompareTag("Computer"))
+            {
+                isInInteractionRange = true;
+                Debug.Log("Bilgisayar etkileþim alanýnda.");
+            }
+            else
+            {
+                isInInteractionRange = false;
+            }
+        }
+        else
+        {
+            isInInteractionRange = false;
         }
     }
 
@@ -132,17 +156,6 @@ public class ComputerInteraction : MonoBehaviour
 
     void ExitComputer()
     {
-        if (player == null || playerCamera == null)
-        {
-            Debug.LogError("ExitComputer() çaðrýldý ama player veya playerCamera null! Tekrar bulmaya çalýþýlýyor...");
-            FindPlayerAndCamera();
-            if (player == null || playerCamera == null)
-            {
-                Debug.LogError("Otomatik düzeltme baþarýsýz! Player veya Camera eksik.");
-                return;
-            }
-        }
-
         isUsingComputer = false;
 
         // Oyuncuyu eski konumuna döndür
@@ -169,7 +182,6 @@ public class ComputerInteraction : MonoBehaviour
 
         Debug.Log("Oyuncu eski konumuna döndü.");
     }
-
 
     // Uygulama açma ve kapama iþlevleri
     public void OpenSosyalMedya()
