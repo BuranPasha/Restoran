@@ -83,6 +83,7 @@ MonoBehaviour:
   - OpenFreezer
   - RPC_AddItem
   - RPC_RemoveItem
+  - UpdateDayNight
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
