@@ -23,7 +23,7 @@ public class DayNightSystem : MonoBehaviourPunCallbacks, IPunObservable
         UpdateLighting(); // Herkes ýþýðý günceller
     }
 
-    void UpdateTime()
+    private void UpdateTime()
     {
         // Sabit zaman hýzýna göre dakika ekle
         timeElapsed += Time.deltaTime * timeSpeed;
@@ -41,10 +41,14 @@ public class DayNightSystem : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     hour = 0;
                     day++; // Gün arttýr
+
+                    // Gün deðiþtiðinde faiz uygulamasý yapýlýr
+                    BankingSystem.instance.ApplyInterest();  // Burada faiz uygulama fonksiyonu çaðrýlýr
                 }
             }
         }
 
+        // Saat ve gün bilgilerini UI'ye yansýtma
         timeText.text = $"{hour:D2}:{minute:D2} {(hour < 12 ? "AM" : "PM")}";
         dayText.text = $"Day {day}";
     }
@@ -92,6 +96,15 @@ public class DayNightSystem : MonoBehaviourPunCallbacks, IPunObservable
 
         // Ortam ýþýðýný daha karanlýk yapalým
         RenderSettings.ambientLight = Color.Lerp(Color.white, new Color(0.05f, 0.05f, 0.1f), normalizedTime);
+    }
+
+    void ApplyDebtInterest()
+    {
+        if (BankingSystem.instance.currentDebt > 0)
+        {
+            BankingSystem.instance.currentDebt += Mathf.FloorToInt(BankingSystem.instance.currentDebt * 0.02f);  // %2 faiz
+            BankingSystem.instance.UpdateBankingUI();  // UI güncelleme
+        }
     }
 
 
