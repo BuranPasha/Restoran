@@ -4,133 +4,170 @@ using Photon.Pun;
 
 public class DayNightSystem : MonoBehaviourPunCallbacks, IPunObservable
 {
+    public static DayNightSystem Instance;
+
+    [Header("UI References")]
     public TextMeshProUGUI timeText;
     public TextMeshProUGUI dayText;
+
+    [Header("Lighting Settings")]
     public Light sunLight;
-    public float timeSpeed = 60f;  // Zaman hýzý, saniyede 60 dakika
-    private float timeElapsed = 0f; // Zamanýn ilerlemesi için sayaç
+    public float timeSpeed = 60f;
 
-    private int hour = 7;
-    private int minute = 0;
-    private int day = 1;
+    // Network-synchronized time data
+    private int currentHour = 7;
+    private int currentMinute = 0;
+    private int currentDay = 1;
+    private float timeAccumulator = 0f;
 
-    private void Update()
+    // Lighting control parameters
+    private const float sunsetStart = 18f;
+    private const float nightStart = 20f;
+    private const float sunriseStart = 4f;
+    private const float dayStart = 7f;
+
+    private PhotonView photonView;
+
+    void Awake()
     {
-        if (PhotonNetwork.IsMasterClient) // Sadece Master Client zamaný ilerletir
+        if (Instance == null)
         {
-            UpdateTime();
+            Instance = this;
+            photonView = GetComponent<PhotonView>();
         }
-        UpdateLighting(); // Herkes ýþýðý günceller
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
-    private void UpdateTime()
+    void Update()
     {
-        // Sabit zaman hýzýna göre dakika ekle
-        timeElapsed += Time.deltaTime * timeSpeed;
-        while (timeElapsed >= 60f)  // 60 saniyelik bir süre geçtiðinde
+        if (PhotonNetwork.IsMasterClient)
         {
-            timeElapsed -= 60f;  // Zaman sayaçýný sýfýrla
-            minute++;  // Dakikayý arttýr
+            UpdateMasterTime();
+        }
+        UpdateLighting();
+        UpdateTimeDisplay();
+    }
 
-            if (minute >= 60)
+    void UpdateMasterTime()
+    {
+        timeAccumulator += Time.deltaTime * timeSpeed;
+
+        while (timeAccumulator >= 60f)
+        {
+            timeAccumulator -= 60f;
+            currentMinute++;
+
+            if (currentMinute >= 60)
             {
-                minute = 0;
-                hour++;  // Saat arttýr
+                currentMinute = 0;
+                currentHour++;
 
-                if (hour == 24) // 11:59 PM’den sonra gün deðiþimi
+                if (currentHour >= 24)
                 {
-                    hour = 0;
-                    day++; // Gün arttýr
-
-                    // Gün deðiþtiðinde faiz uygulamasý yapýlýr
-                    BankingSystem.instance.ApplyInterest();  // Burada faiz uygulama fonksiyonu çaðrýlýr
+                    currentHour = 0;
+                    currentDay++;
+                    BankingSystem.Instance.ApplyInterest();
                 }
             }
         }
+    }
 
-        // Saat ve gün bilgilerini UI'ye yansýtma
-        timeText.text = $"{hour:D2}:{minute:D2} {(hour < 12 ? "AM" : "PM")}";
-        dayText.text = $"Day {day}";
+    void UpdateTimeDisplay()
+    {
+        string period = currentHour < 12 ? "AM" : "PM";
+        int displayHour = currentHour % 12;
+        displayHour = displayHour == 0 ? 12 : displayHour;
+
+        timeText.text = $"{displayHour:D2}:{currentMinute:D2} {period}";
+        dayText.text = $"Day {currentDay}";
     }
 
     void UpdateLighting()
     {
-        // Saat aralýklarýný tanýmlayalým
-        float sunsetStart = 18f; // 18:00'de gün batýmý baþlar
-        float nightStart = 20f;  // 20:00'de tam gece baþlar
-        float sunriseStart = 4f; // 04:00'te gün doðumu baþlar
-        float dayStart = 7f;     // 07:00'de tamamen gündüz baþlar
+        float currentTime = currentHour + currentMinute / 60f;
+        float normalizedTime = CalculateNormalizedTime(currentTime);
 
-        // Geçiþ için normalleþtirilmiþ zaman deðeri
-        float normalizedTime = 0f;
-
-        if (hour >= sunsetStart && hour < nightStart)
-        {
-            // 18:00 - 20:00 Arasý (Gün Batýmý)
-            normalizedTime = Mathf.InverseLerp(sunsetStart, nightStart, hour + minute / 60f);
-        }
-        else if (hour >= nightStart || hour < sunriseStart)
-        {
-            // 20:00 - 04:00 Arasý (Tam Gece, En Karanlýk Zaman)
-            normalizedTime = 1f; // Tamamen karanlýk
-        }
-        else if (hour >= sunriseStart && hour < dayStart)
-        {
-            // 04:00 - 07:00 Arasý (Gün Doðumu)
-            normalizedTime = Mathf.InverseLerp(sunriseStart, dayStart, hour + minute / 60f);
-            normalizedTime = 1 - normalizedTime; // Gün doðumu sýrasýnda karanlýktan aydýnlýða geçiþ
-        }
-        else
-        {
-            // 07:00 - 18:00 Arasý (Tamamen Gündüz)
-            normalizedTime = 0f; // Tamamen aydýnlýk
-        }
-
-        // Gece ýþýðýný daha karanlýk yapmak için minIntensity deðerini düþürelim
-        float minIntensity = 0.005f; // Gece için daha düþük ýþýk
-        float maxIntensity = 1.2f;   // Gündüz için yüksek ýþýk
-        sunLight.intensity = Mathf.Lerp(minIntensity, maxIntensity, 1 - normalizedTime);
-
-        // Gün ýþýðýnýn rengi (gün batýmý ve doðumu için kýrmýzýmsý, gece için morumsu)
-        sunLight.color = Color.Lerp(new Color(1f, 0.8f, 0.6f), new Color(0.1f, 0.1f, 0.3f), normalizedTime);
-
-        // Ortam ýþýðýný daha karanlýk yapalým
-        RenderSettings.ambientLight = Color.Lerp(Color.white, new Color(0.05f, 0.05f, 0.1f), normalizedTime);
+        UpdateSunParameters(normalizedTime);
+        UpdateAmbientLight(normalizedTime);
     }
 
-    void ApplyDebtInterest()
+    float CalculateNormalizedTime(float currentTime)
     {
-        if (BankingSystem.instance.currentDebt > 0)
+        if (currentTime >= sunsetStart && currentTime < nightStart)
         {
-            BankingSystem.instance.currentDebt += Mathf.FloorToInt(BankingSystem.instance.currentDebt * 0.02f);  // %2 faiz
-            BankingSystem.instance.UpdateBankingUI();  // UI güncelleme
+            return Mathf.InverseLerp(sunsetStart, nightStart, currentTime);
         }
+        else if (currentTime >= nightStart || currentTime < sunriseStart)
+        {
+            return 1f;
+        }
+        else if (currentTime >= sunriseStart && currentTime < dayStart)
+        {
+            return 1 - Mathf.InverseLerp(sunriseStart, dayStart, currentTime);
+        }
+        return 0f;
     }
 
+    void UpdateSunParameters(float normalizedTime)
+    {
+        const float minIntensity = 0.005f;
+        const float maxIntensity = 1.2f;
+
+        sunLight.intensity = Mathf.Lerp(maxIntensity, minIntensity, normalizedTime);
+        sunLight.color = Color.Lerp(
+            new Color(1f, 0.8f, 0.6f),
+            new Color(0.1f, 0.1f, 0.3f),
+            normalizedTime
+        );
+    }
+
+    void UpdateAmbientLight(float normalizedTime)
+    {
+        RenderSettings.ambientLight = Color.Lerp(
+            Color.white,
+            new Color(0.05f, 0.05f, 0.1f),
+            normalizedTime
+        );
+    }
 
     public void TrySleep()
     {
-        if (hour >= 22 && PhotonNetwork.IsMasterClient)
+        if (currentHour >= 22 && PhotonNetwork.IsMasterClient)
         {
-            hour = 7;
-            minute = 0;
-            day++;
+            photonView.RPC("AdvanceToMorningRPC", RpcTarget.AllViaServer);
         }
+    }
+
+    [PunRPC]
+    void AdvanceToMorningRPC()
+    {
+        currentHour = 7;
+        currentMinute = 0;
+        currentDay++;
+        BankingSystem.Instance.ApplyInterest();
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.IsWriting) // Master Client veri gönderiyor
+        if (stream.IsWriting)
         {
-            stream.SendNext(hour);
-            stream.SendNext(minute);
-            stream.SendNext(day);
+            stream.SendNext(currentHour);
+            stream.SendNext(currentMinute);
+            stream.SendNext(currentDay);
         }
-        else // Diðer oyuncular veriyi alýyor
+        else
         {
-            hour = (int)stream.ReceiveNext();
-            minute = (int)stream.ReceiveNext();
-            day = (int)stream.ReceiveNext();
+            currentHour = (int)stream.ReceiveNext();
+            currentMinute = (int)stream.ReceiveNext();
+            currentDay = (int)stream.ReceiveNext();
         }
     }
+
+    // Public accessors
+    public int CurrentHour => currentHour;
+    public int CurrentMinute => currentMinute;
+    public int CurrentDay => currentDay;
 }
