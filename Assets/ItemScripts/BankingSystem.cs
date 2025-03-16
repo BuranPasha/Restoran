@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using Photon.Pun;
+using System.Globalization;
 
 public class BankingSystem : MonoBehaviourPunCallbacks, IPunObservable
 {
@@ -138,9 +139,11 @@ public class BankingSystem : MonoBehaviourPunCallbacks, IPunObservable
 
     void UpdateBankingUI()
     {
-        balanceText.text = $"Shared Funds: {sharedMoney:C}";
-        debtText.text = $"Total Debt: {currentDebt:C}";
-        loanText.text = $"Active Loan: {activeLoanAmount:C}";
+        CultureInfo usdCulture = new CultureInfo("en-US");
+
+        balanceText.text = $"Shared Funds: {sharedMoney.ToString("C", usdCulture)}";
+        debtText.text = $"Total Debt: {currentDebt.ToString("C", usdCulture)}";
+        loanText.text = $"Active Loan: {activeLoanAmount.ToString("C", usdCulture)}";
         interestRateText.text = $"Interest Rate: {interestRate * 100}%";
     }
 
