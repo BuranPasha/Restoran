@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using TMPro;
@@ -13,31 +12,35 @@ public class ItemShop : MonoBehaviourPun
         public string itemName;
         public GameObject itemPrefab;
         public int price;
-        public TMP_InputField quantityInput; // Miktar giriþi için input alaný
-        public Button addToCartButton; // Sepete ekleme butonu
+        public TMP_InputField quantityInput;
+        public Button addToCartButton;
     }
 
     public List<ShopItem> shopItems = new List<ShopItem>();
     public Transform itemSpawnPoint;
     public TMP_Text balanceText;
-    public TMP_Text cartText; // Sepet içeriðini göstermek için UI Text
+    public TMP_Text cartText;
+    public Button clearCartButton;
 
-    private Dictionary<ShopItem, int> cart = new Dictionary<ShopItem, int>(); // Sepet listesi
+    private Dictionary<ShopItem, int> cart = new Dictionary<ShopItem, int>();
 
     void Start()
     {
         UpdateBalanceUI();
         UpdateCartUI();
 
-        // Sepete ekleme butonlarýna týklama eventleri ekleniyor
         for (int i = 0; i < shopItems.Count; i++)
         {
-            int index = i; // Lambda fonksiyonlarý için gerekli
+            int index = i;
             shopItems[i].addToCartButton.onClick.AddListener(() => AddToCart(index));
+        }
+
+        if (clearCartButton != null)
+        {
+            clearCartButton.onClick.AddListener(ClearCart);
         }
     }
 
-    // **Ürünü sepete ekleme**
     public void AddToCart(int itemIndex)
     {
         if (itemIndex < 0 || itemIndex >= shopItems.Count)
@@ -55,10 +58,9 @@ public class ItemShop : MonoBehaviourPun
         }
 
         int quantity = 1;
-
         if (int.TryParse(item.quantityInput.text, out int parsedQuantity))
         {
-            quantity = Mathf.Max(1, parsedQuantity); // **En az 1 olmalý**
+            quantity = Mathf.Max(1, parsedQuantity);
         }
 
         if (cart.ContainsKey(item))
@@ -74,7 +76,6 @@ public class ItemShop : MonoBehaviourPun
         Debug.Log(item.itemName + " sepete " + quantity + " adet eklendi.");
     }
 
-    // **Sepet UI güncelleme**
     void UpdateCartUI()
     {
         cartText.text = "Sepet: \n";
@@ -84,7 +85,13 @@ public class ItemShop : MonoBehaviourPun
         }
     }
 
-    // **Ürünleri satýn alma**
+    public void ClearCart()
+    {
+        cart.Clear();
+        UpdateCartUI();
+        Debug.Log("Sepet temizlendi!");
+    }
+
     public void PurchaseItems()
     {
         if (cart.Count == 0)
@@ -100,7 +107,6 @@ public class ItemShop : MonoBehaviourPun
         }
 
         int totalCost = 0;
-
         foreach (var item in cart)
         {
             if (item.Key == null)
@@ -120,35 +126,27 @@ public class ItemShop : MonoBehaviourPun
         // **Parayý düþ**
         BankingSystem.Instance.AddFunds(-totalCost);
 
-        // **Ürünleri sýrayla spawnla**
-        StartCoroutine(SpawnItemsSequentially());
+        // **Tüm ürünleri anýnda spawnla**
+        SpawnAllItems();
 
         // **Sepeti temizle**
-        cart.Clear();
-        UpdateCartUI();
+        ClearCart();
         UpdateBalanceUI();
     }
 
-    // **Sýrayla ürünleri spawn eden coroutine**
-    IEnumerator SpawnItemsSequentially()
+    void SpawnAllItems()
     {
-        Vector3 spawnOffset = Vector3.zero; // Ýlk spawn noktasý
+        Vector3 spawnOffset = Vector3.zero;
 
         foreach (var item in cart)
         {
             for (int i = 0; i < item.Value; i++)
             {
-                Debug.Log(item.Key.itemName + " spawn edilecek.");
-
-                // RPC ile Photon üzerinden spawn iþlemi
                 photonView.RPC("SpawnItem", RpcTarget.All, item.Key.itemName, itemSpawnPoint.position + spawnOffset);
-
-                spawnOffset += new Vector3(0.5f, 0, 0); // Her spawn edilen item biraz saða kayacak
-                yield return new WaitForSeconds(1f); // 1 saniye arayla spawn
+                spawnOffset += new Vector3(0.5f, 0, 0); // Yan yana dizilsin
             }
         }
     }
-
 
     [PunRPC]
     void SpawnItem(string itemName, Vector3 spawnPosition)
@@ -156,10 +154,8 @@ public class ItemShop : MonoBehaviourPun
         Debug.Log("SpawnItem RPC çaðrýldý: " + itemName);
 
         ShopItem shopItem = shopItems.Find(x => x.itemName == itemName);
-
         if (shopItem != null && shopItem.itemPrefab != null)
         {
-            // Normal Instantiate yerine PhotonNetwork.Instantiate kullan
             GameObject spawnedItem = PhotonNetwork.Instantiate(shopItem.itemPrefab.name, spawnPosition, Quaternion.identity);
             Debug.Log(itemName + " baþarýyla spawn oldu.");
         }
@@ -168,7 +164,6 @@ public class ItemShop : MonoBehaviourPun
             Debug.LogError("SpawnItem Hatasý: " + itemName + " için prefab bulunamadý veya hatalý!");
         }
     }
-
 
     void UpdateBalanceUI()
     {
