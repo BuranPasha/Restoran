@@ -12,6 +12,8 @@ public class BankingSystem : MonoBehaviourPunCallbacks, IPunObservable
     public TMP_Text debtText;
     public TMP_Text balanceText;
     public TMP_Text interestRateText;
+    public TMP_Text moneyText; // UI'deki Money yazýsý
+
 
     // Networked financial data
     private int sharedMoney;
@@ -145,7 +147,14 @@ public class BankingSystem : MonoBehaviourPunCallbacks, IPunObservable
         debtText.text = $"Total Debt: {currentDebt.ToString("C", usdCulture)}";
         loanText.text = $"Active Loan: {activeLoanAmount.ToString("C", usdCulture)}";
         interestRateText.text = $"Interest Rate: {interestRate * 100}%";
+
+        // Para UI'sini güncelle
+        if (moneyText != null)
+        {
+            moneyText.text = $"Money: {sharedMoney}$";
+        }
     }
+
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
