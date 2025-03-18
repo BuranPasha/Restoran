@@ -126,7 +126,7 @@ public class ItemShop : MonoBehaviourPun
         // **Parayý düþ**
         BankingSystem.Instance.AddFunds(-totalCost);
 
-        // **Tüm ürünleri anýnda spawnla**
+        // **Tüm ürünleri üst üste spawnla**
         SpawnAllItems();
 
         // **Sepeti temizle**
@@ -143,7 +143,7 @@ public class ItemShop : MonoBehaviourPun
             for (int i = 0; i < item.Value; i++)
             {
                 photonView.RPC("SpawnItem", RpcTarget.All, item.Key.itemName, itemSpawnPoint.position + spawnOffset);
-                spawnOffset += new Vector3(0.5f, 0, 0); // Yan yana dizilsin
+                spawnOffset += new Vector3(0, 0.5f, 0); // Üst üste yýðmak için Y ekseninde 0.5 birim yukarý kaydýr
             }
         }
     }
