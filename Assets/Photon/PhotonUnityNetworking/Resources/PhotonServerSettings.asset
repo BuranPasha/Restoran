@@ -91,6 +91,13 @@ MonoBehaviour:
   - ProcessPaymentRPC
   - SyncFinancialsRPC
   - SpawnItem
+  - RPC_DropAllStackedObjects
+  - RPC_PlaceObject
+  - RPC_StackItem
+  - RPC_AddToStack
+  - RPC_DropSingleObject
+  - SetParent
+  - SetStacked
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

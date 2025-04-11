@@ -360,7 +360,6 @@ MonoBehaviour:
   - {fileID: 1289281501412312798}
   - {fileID: 4326171936692621715}
   - {fileID: 4444051092395864061}
-  - {fileID: 3654650429537341618}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -519,6 +518,16 @@ MonoBehaviour:
   interactionDistance: 2
   holdPosition: {fileID: 3816328514633793554}
   leftPositionTag: LeftPosition
+  dropForce: 5
+  interactableLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  stackSpacing: 0.4
+  tiltAmount: 15
+  tiltSpeed: 3
+  maxStackCount: 10
+  stackMergeDistance: 0.5
+  inventorySize: 5
 --- !u!114 &-6081807636097162747
 MonoBehaviour:
   m_ObjectHideFlags: 0
