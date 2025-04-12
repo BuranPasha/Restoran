@@ -1,6 +1,6 @@
 using Photon.Pun;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class FPSInteraction : MonoBehaviourPunCallbacks
 {
@@ -45,13 +45,8 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
 
     void HandleMovementTilt()
     {
-        // Eðer item taþýnýyorsa, tüm hareketi engelle
-        if (heldObject != null && currentStackCount > 0)
-        {
-            return; // Hiçbir hareket iþlemi yapýlmasýn
-        }
+        if (heldObject != null && currentStackCount > 0) return;
 
-        // Yalnýzca normal hareket
         Vector3 moveDirection = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
         if (moveDirection.magnitude > 0.1f)
@@ -64,8 +59,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
             ResetTiltEffect();
         }
     }
-
-
 
     void ApplyTiltEffect()
     {
@@ -152,8 +145,14 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
             heldObject.transform.localPosition = Vector3.zero;
             heldObject.transform.localRotation = Quaternion.identity;
 
+            // Ensure correct scale when retrieving
+            StackableItem stackable = heldObject.GetComponent<StackableItem>();
+            if (stackable != null)
+            {
+                heldObject.transform.localScale = stackable.originalScale;
+            }
+
             currentStackCount = CountItemsInStack(heldObject.transform);
-            Debug.Log($"Retrieved item from slot {selectedSlot}, stack count: {currentStackCount}");
         }
     }
 
@@ -171,13 +170,13 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
 
     void HandleInteractionInput()
     {
-        if (Input.GetKeyDown(KeyCode.LeftShift)) // Shift ile tüm stack'i býrak
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            photonView.RPC("RPC_DropAllStackedObjects", RpcTarget.AllBuffered);
+            TryScatterDrop();
         }
-        else if (Input.GetKeyDown(KeyCode.G)) // G ile tüm stack'i býrak (Shift gibi)
+        else if (Input.GetKeyDown(KeyCode.G))
         {
-            photonView.RPC("RPC_DropAllStackedObjects", RpcTarget.AllBuffered);
+            photonView.RPC("RPC_DropStackedObjectsNormally", RpcTarget.AllBuffered);
         }
         else if (Input.GetKeyDown(KeyCode.E))
         {
@@ -195,6 +194,150 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         }
     }
 
+    void TryScatterDrop()
+    {
+        if (heldObject == null) return;
+
+        List<Transform> itemsToDrop = new List<Transform>();
+        Transform current = heldObject.transform;
+
+        while (current != null)
+        {
+            itemsToDrop.Add(current);
+            current = current.childCount > 0 ? current.GetChild(0) : null;
+        }
+
+        bool shouldScatter = CalculateScatterChance(itemsToDrop.Count);
+
+        if (shouldScatter)
+        {
+            photonView.RPC("RPC_ScatterDrop", RpcTarget.AllBuffered);
+        }
+        else
+        {
+            Debug.Log("Scatter chance failed - items remain in hand");
+        }
+    }
+
+    bool CalculateScatterChance(int itemCount)
+    {
+        // Scatter chances:
+        // 1-3 items: 0%
+        // 4 items: 30%
+        // 5 items: 50%
+        // 6 items: 70%
+        // 7 items: 80%
+        // 8 items: 90%
+        // 9+ items: 100%
+        float[] scatterChances = { 0f, 0f, 0f, 0f, 0.3f, 0.5f, 0.7f, 0.8f, 0.9f, 1f };
+        int index = Mathf.Clamp(itemCount, 0, scatterChances.Length - 1);
+        return Random.value < scatterChances[index];
+    }
+
+    [PunRPC]
+    void RPC_ScatterDrop()
+    {
+        if (heldObject == null) return;
+
+        List<Transform> itemsToDrop = new List<Transform>();
+        Transform current = heldObject.transform;
+
+        while (current != null)
+        {
+            itemsToDrop.Add(current);
+            current = current.childCount > 0 ? current.GetChild(0) : null;
+        }
+
+        foreach (Transform item in itemsToDrop)
+        {
+            DropSingleObject(item.gameObject, true);
+        }
+
+        inventory[selectedSlot] = null;
+        heldObject = null;
+        currentStackCount = 0;
+    }
+
+    [PunRPC]
+    void RPC_DropStackedObjectsNormally()
+    {
+        if (heldObject == null) return;
+
+        List<Transform> itemsToDrop = new List<Transform>();
+        Transform current = heldObject.transform;
+
+        while (current != null)
+        {
+            itemsToDrop.Add(current);
+            current = current.childCount > 0 ? current.GetChild(0) : null;
+        }
+
+        foreach (Transform item in itemsToDrop)
+        {
+            DropSingleObject(item.gameObject, false);
+        }
+
+        inventory[selectedSlot] = null;
+        heldObject = null;
+        currentStackCount = 0;
+    }
+
+    void DropSingleObject(GameObject obj, bool scatter)
+    {
+        obj.transform.SetParent(null);
+
+        StackableItem stackable = obj.GetComponent<StackableItem>();
+        if (stackable != null)
+        {
+            stackable.isStacked = false;
+            obj.transform.localScale = stackable.originalScale;
+
+            if (stackable.photonView != null)
+            {
+                stackable.photonView.RPC("SetStacked", RpcTarget.AllBuffered, false);
+            }
+        }
+
+        ResetObjectPhysics(obj, scatter);
+
+        PhotonView pv = obj.GetComponent<PhotonView>();
+        if (pv != null && pv.IsMine)
+        {
+            pv.TransferOwnership(0);
+        }
+    }
+
+    void ResetObjectPhysics(GameObject obj, bool scatter)
+    {
+        Rigidbody rb = obj.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            rb.detectCollisions = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            if (scatter)
+            {
+                Vector3 scatterDirection = new Vector3(
+                    Random.Range(-1f, 1f),
+                    Random.Range(0.1f, 0.3f), // Reduced upward force
+                    Random.Range(-1f, 1f)
+                ).normalized;
+
+                rb.AddForce(scatterDirection * dropForce, ForceMode.Impulse);
+            }
+            else
+            {
+                rb.AddForce(transform.forward * dropForce * 0.3f, ForceMode.Impulse);
+            }
+        }
+
+        Collider col = obj.GetComponent<Collider>();
+        if (col != null) col.enabled = true;
+    }
+
     void TryPickUp()
     {
         RaycastHit[] hits = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), interactionDistance, interactableLayers);
@@ -206,15 +349,13 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
             PhotonView objPV = objToPick.GetComponent<PhotonView>();
             if (objPV == null) continue;
 
-            Debug.Log($"Trying to pick up: {objToPick.name}");
-
             if (!objPV.IsMine)
             {
                 objPV.TransferOwnership(PhotonNetwork.LocalPlayer);
             }
 
             photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objPV.ViewID, selectedSlot);
-            break; // Sadece ilk geçerli objeyi al
+            break;
         }
     }
 
@@ -222,21 +363,15 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
     void RPC_PickUpObject(int objectViewID, int slotIndex)
     {
         PhotonView objPV = PhotonView.Find(objectViewID);
-        if (objPV == null)
-        {
-            Debug.LogError("Object PhotonView not found!");
-            return;
-        }
+        if (objPV == null) return;
 
         GameObject objToPick = objPV.gameObject;
-        Debug.Log($"Picking up object: {objToPick.name}");
 
         if (!objPV.IsMine)
         {
             objPV.TransferOwnership(PhotonNetwork.LocalPlayer);
         }
 
-        // Eðer baþka bir slot seçilmiþse, önceki itemý sakla
         if (slotIndex != selectedSlot && heldObject != null)
         {
             StoreCurrentItem();
@@ -246,54 +381,39 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         heldObject = objToPick;
         inventory[selectedSlot] = heldObject;
 
-        // Stack kontrolü
+        // Reset scale when picking up
         StackableItem stackable = heldObject.GetComponent<StackableItem>();
-        if (stackable != null && stackable.isStacked)
+        if (stackable != null)
         {
-            // Eðer zaten stacklenmiþ bir item alýyorsak, tüm stacki al
-            currentStackCount = CountItemsInStack(heldObject.transform);
-        }
-        else
-        {
-            currentStackCount = 1;
+            heldObject.transform.localScale = stackable.originalScale;
         }
 
         heldObject.transform.SetParent(holdPosition);
         heldObject.transform.localPosition = Vector3.zero;
         heldObject.transform.localRotation = Quaternion.identity;
 
-        // Fiziksel özellikleri devre dýþý býrak
         Rigidbody rb = heldObject.GetComponent<Rigidbody>();
         if (rb != null)
         {
-            rb.isKinematic = true; // Kinematik yapmak, itemin fiziksel etkilerden baðýmsýz olmasýný saðlar
+            rb.isKinematic = true;
             rb.detectCollisions = false;
         }
 
         Collider col = heldObject.GetComponent<Collider>();
         if (col != null) col.enabled = false;
 
-        // Boyutlarý deðiþtirmeden taþýnmasýný saðla
-        // localScale deðerini deðiþtirme, itemin doðal boyutlarýný koru
-
-        Debug.Log($"Picked up: {heldObject.name}, Stack count: {currentStackCount}");
+        currentStackCount = CountItemsInStack(heldObject.transform);
     }
 
     bool TryAddToStack()
     {
-        if (heldObject == null || currentStackCount >= maxStackCount)
-        {
-            Debug.Log("Cannot stack: No held object or stack limit reached");
-            return false;
-        }
+        if (heldObject == null || currentStackCount >= maxStackCount) return false;
 
         RaycastHit[] hits = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), interactionDistance, interactableLayers);
         foreach (RaycastHit hit in hits)
         {
             GameObject targetObj = hit.collider.gameObject;
             if (targetObj == heldObject) continue;
-
-            Debug.Log($"Trying to stack with: {targetObj.name}");
 
             StackableItem targetStack = targetObj.GetComponent<StackableItem>();
             StackableItem heldStack = heldObject.GetComponent<StackableItem>();
@@ -306,7 +426,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
                 PhotonView targetPV = targetObj.GetComponent<PhotonView>();
                 if (targetPV != null)
                 {
-                    Debug.Log($"Stacking with: {targetObj.name} (ID: {targetPV.ViewID})");
                     photonView.RPC("RPC_AddToStack", RpcTarget.AllBuffered, targetPV.ViewID);
                     return true;
                 }
@@ -319,44 +438,13 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
     void RPC_AddToStack(int itemViewID)
     {
         PhotonView itemPV = PhotonView.Find(itemViewID);
-        if (itemPV == null)
-        {
-            Debug.LogError("Item PhotonView not found!");
-            return;
-        }
-
-        if (heldObject == null)
-        {
-            Debug.LogError("No held object!");
-            return;
-        }
-
-        if (currentStackCount >= maxStackCount)
-        {
-            Debug.Log("Stack limit reached!");
-            return;
-        }
+        if (itemPV == null || heldObject == null || currentStackCount >= maxStackCount) return;
 
         GameObject objToStack = itemPV.gameObject;
-        if (objToStack == heldObject)
-        {
-            Debug.LogError("Cannot stack with itself!");
-            return;
-        }
+        if (objToStack == heldObject) return;
 
         StackableItem stackable = objToStack.GetComponent<StackableItem>();
-        if (stackable == null)
-        {
-            Debug.LogError("No StackableItem component!");
-            return;
-        }
-
-        // Eðer zaten baþka bir stack'e baðlýysa
-        if (stackable.isStacked)
-        {
-            Debug.LogError("Item already stacked!");
-            return;
-        }
+        if (stackable == null || stackable.isStacked) return;
 
         // Fizik özelliklerini devre dýþý býrak
         Rigidbody rb = objToStack.GetComponent<Rigidbody>();
@@ -374,6 +462,10 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         objToStack.transform.SetParent(attachPoint);
         objToStack.transform.localPosition = new Vector3(0, stackSpacing, 0);
         objToStack.transform.localRotation = Quaternion.identity;
+
+        // Ölçek ve görünürlük ayarlarý
+        objToStack.transform.localScale = Vector3.one; // Ölçeði sýfýrlama
+        objToStack.SetActive(true); // Görünürlüðü garanti et
 
         // StackableItem durumunu güncelle
         stackable.isStacked = true;
@@ -420,7 +512,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         objToPlace.transform.position = position;
         objToPlace.transform.rotation = Quaternion.identity;
 
-        // Tüm stack'i býrak
         List<Transform> children = new List<Transform>();
         foreach (Transform child in objToPlace.transform)
         {
@@ -430,117 +521,13 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         foreach (Transform child in children)
         {
             child.SetParent(null);
-            ResetObjectPhysics(child.gameObject);
+            ResetObjectPhysics(child.gameObject, false);
         }
 
-        ResetObjectPhysics(objToPlace);
+        ResetObjectPhysics(objToPlace, false);
 
         inventory[selectedSlot] = null;
         heldObject = null;
         currentStackCount = 0;
-
-        Item item = objToPlace.GetComponent<Item>();
-        if (item != null) item.ResumeCooking();
-    }
-
-    [PunRPC]
-    void RPC_DropAllStackedObjects()
-    {
-        if (heldObject == null) return;
-
-        Debug.Log("Dropping all stacked objects");
-
-        // Tüm stack'i býrak
-        List<Transform> itemsToDrop = new List<Transform>();
-        Transform current = heldObject.transform;
-
-        while (current != null)
-        {
-            itemsToDrop.Add(current);
-            current = current.childCount > 0 ? current.GetChild(0) : null;
-        }
-
-        foreach (Transform item in itemsToDrop)
-        {
-            DropSingleObject(item.gameObject);
-        }
-
-        inventory[selectedSlot] = null;
-        heldObject = null;
-        currentStackCount = 0;
-    }
-
-    void DropSingleObject(GameObject obj)
-    {
-        Debug.Log($"Dropping object: {obj.name}");
-
-        // Parent iliþkisini kes
-        obj.transform.SetParent(null);
-
-        // StackableItem durumunu güncelle
-        StackableItem stackable = obj.GetComponent<StackableItem>();
-        if (stackable != null)
-        {
-            stackable.isStacked = false;
-            if (stackable.photonView != null)
-            {
-                stackable.photonView.RPC("SetStacked", RpcTarget.AllBuffered, false);
-            }
-        }
-
-        ResetObjectPhysics(obj);
-
-        // Photon Ownership'i serbest býrak
-        PhotonView pv = obj.GetComponent<PhotonView>();
-        if (pv != null && pv.IsMine)
-        {
-            pv.TransferOwnership(0); // Master Client'a devret
-        }
-    }
-
-    void ResetObjectPhysics(GameObject obj)
-    {
-        Rigidbody rb = obj.GetComponent<Rigidbody>();
-        if (rb != null)
-        {
-            rb.isKinematic = false; // Fiziksel etkileþimleri tekrar aktif yap
-            rb.detectCollisions = true;
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
-            rb.AddForce(new Vector3(
-                Random.Range(-1f, 1f),
-                Random.Range(0.5f, 1f),
-                Random.Range(-1f, 1f)) * dropForce);
-        }
-
-        Collider col = obj.GetComponent<Collider>();
-        if (col != null)
-        {
-            col.enabled = true;
-        }
-    }
-
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(heldObject != null ? heldObject.GetComponent<PhotonView>().ViewID : -1);
-            stream.SendNext(currentStackCount);
-        }
-        else
-        {
-            int viewID = (int)stream.ReceiveNext();
-            currentStackCount = (int)stream.ReceiveNext();
-            
-            if (viewID != -1)
-            {
-                PhotonView pv = PhotonView.Find(viewID);
-                if (pv != null)
-                {
-                    heldObject = pv.gameObject;
-                }
-            }
-        }
     }
 }
