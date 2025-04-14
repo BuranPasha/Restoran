@@ -4,19 +4,19 @@ Burhan
 
 13-27 misan
 
-Ocak - pişirme eldiveni - tava - zeytin yağ plastik  - alev - zeytin yağ teneke - teneke içecek - çatal - kaşıl - Masa + para
+Ocak - pişirme eldiveni - tava - zeytin yağ plastik  - alev - zeytin yağ teneke - teneke içecek - çatal - kaşıl - Masa + para (yemek modellemeleri)
 
 27-11 mayıs
 
-Sebzeler - Meyveler - Değişik biçimde etler - Tuz - baharatlar - Soslar - tarif kitabı
+Sebzeler - Meyveler - Değişik biçimde etler - Tuz - baharatlar - Soslar - tarif kitabı - (dış dünya) (yemek modellemeleri)
 
 11-25 mayıs
 
-genel mutfak
+genel mutfak - casino makineleri (arabalar + kullanılabilr araçlar) (yemek modellemeleri)
 
 25-8 haziran
 
-genel restoran restoran iç dizayn
+genel restoran restoran iç dizayn (casino dizaynı)
 
 8-22 haziran
 
@@ -35,7 +35,7 @@ Mustafa METEHAN
 
 13-27 misan
 
-birleştirme - tarif sistemi
+item alma bugfix + highlight + mobilya satın alma + yerleştirme
 
 27-11 mayıs
 
@@ -47,7 +47,7 @@ restoran düzenleme + mobilya satın alma
 
 25-8 haziran
 
-cep telefonu + sosyal medya? + haber manşetleri yazın
+sosyal medya? + haber manşetleri yazın + casino
  
 8-22 haziran
 
@@ -55,13 +55,9 @@ bug fix - ai başlangıç - şehir kalabalığı ( etrafta dolaşan rastgele npc
 
 22-6 temmuz
 
-bug fix - ai başlangıç - şehir kalabalığı ( etrafta dolaşan rastgele npcler)
-
-27-4 mayıs
-
 oyuncu için oyun içi düzenlemeler - (gün zorluğu leveli) - yıldız sistemi
 
-4-11 mayıs
+6-30 temmuz
 
 karakter için dizayn satın alma menüsü + değişik npc
 
