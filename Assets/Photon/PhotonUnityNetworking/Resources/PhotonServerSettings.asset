@@ -98,6 +98,9 @@ MonoBehaviour:
   - RPC_DropSingleObject
   - SetParent
   - SetStacked
+  - RPC_DropItemsWithForce
+  - RPC_DropStackedObjectsNormally
+  - RPC_ScatterDrop
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

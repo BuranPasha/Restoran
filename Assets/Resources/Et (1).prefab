@@ -226,6 +226,7 @@ MonoBehaviour:
   itemType: Default
   holdRotation: {x: 0, y: 90, z: 0}
   isStacked: 0
+  originalScale: {x: 0, y: 0, z: 0}
 --- !u!23 &8342677591716123245 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 664fc0a535abc984abe9fcf154aca293, type: 3}
