@@ -2,92 +2,71 @@ Pazardan pazara
 
 Burhan
 
-9-16 mart
+13-27 misan
 
-Ocak - pişirme eldiveni - tava - zeytin yağ plastik  - alev - zeytin yağ teneke - teneke içecek - çatal - kaşıl - Masa + para
+Ocak - pişirme eldiveni - tava - zeytin yağ plastik  - alev - zeytin yağ teneke - teneke içecek - çatal - kaşıl - Masa + para (yemek modellemeleri)
 
-16-23 mart
+27-11 mayıs
 
-Sebzeler - Meyveler - Değişik biçimde etler - Tuz - baharatlar - Soslar - tarif kitabı
+Sebzeler - Meyveler - Değişik biçimde etler - Tuz - baharatlar - Soslar - tarif kitabı - (dış dünya) (yemek modellemeleri)
 
-23-30 mart
+11-25 mayıs
 
-genel mutfak
+genel mutfak - casino makineleri (arabalar + kullanılabilr araçlar) (yemek modellemeleri)
 
-30-6 nisan
+25-8 haziran
 
-genel restoran restoran iç dizayn
+genel restoran restoran iç dizayn (casino dizaynı)
 
-6-13 nisan 
-
-genel restoran restoran iç dizayn
-
-13-20 nisan
+8-22 haziran
 
 dış çevre yapıları + araç
 
-20-27 nisan
+22-6 temmuz
 
-dış çevre yapıları + araç
+npcler 
 
-27-4 mayıs
-
-npcler için başlangıç
-
-4-11 mayıs
-
-npcler için bitiş + kendi karakterimiz
-
-11-18 mayıs 
+ağustos
 
 cila + uı
 
-Demo çıkış tarihi 18 Mayıs
 
+Mustafa METEHAN
 
-Ali kan
-Mustafa
+13-27 misan
 
-9-16 mart
+item alma bugfix + highlight + mobilya satın alma + yerleştirme
 
-Buz dolabı - spawn - para
-
-16-23 mart
-
-birleştirme - tarif sistemi
-
-23-30 mart
+27-11 mayıs
 
 tarif sistemi - mutfak araç gereçleri kullanımı
 
-30-6 nisan
+11-25 mayıs
 
 restoran düzenleme + mobilya satın alma
 
-6-13 nisan
+25-8 haziran
 
-cep telefonu + sosyal medya? + haber manşetleri yazın
+sosyal medya? + haber manşetleri yazın + casino
  
-13-20 nisan
+8-22 haziran
 
 bug fix - ai başlangıç - şehir kalabalığı ( etrafta dolaşan rastgele npcler)
 
-20-27 nisan
-
-bug fix - ai başlangıç - şehir kalabalığı ( etrafta dolaşan rastgele npcler)
-
-27-4 mayıs
+22-6 temmuz
 
 oyuncu için oyun içi düzenlemeler - (gün zorluğu leveli) - yıldız sistemi
 
-4-11 mayıs
+6-30 temmuz
 
 karakter için dizayn satın alma menüsü + değişik npc
 
-11-18 mayıs 
+ağustos
 
 bug fix + ana menü
 
 Demo çıkış tarihi 18 Mayıs
 
+cezalar
++1 chipotle
  
