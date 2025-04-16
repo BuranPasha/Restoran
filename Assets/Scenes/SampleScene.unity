@@ -3482,6 +3482,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 418751278}
   m_CullTransparentMesh: 1
+--- !u!1 &435297062 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+  m_PrefabInstance: {fileID: 1939462481}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &458815243
 GameObject:
   m_ObjectHideFlags: 0
@@ -5108,24 +5113,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
   m_PrefabInstance: {fileID: 1862233660}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &734948788
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 734948784}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c856d6c895343a441bb72b0e65eb0621, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fridgeDoor: {fileID: 216548582}
-  fridgeShelf1: {fileID: 1012151060}
-  fridgeShelf2: {fileID: 236868917}
-  fridgeLight: {fileID: 221684249}
-  openCloseSpeed: 0.3
-  interactionRange: 3
 --- !u!114 &734948789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5144,8 +5131,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents:
-  - {fileID: 734948788}
+  ObservedComponents: []
   sceneViewId: 19
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -8745,6 +8731,73 @@ Transform:
   m_Children: []
   m_Father: {fileID: 933305824}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1315966678 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+  m_PrefabInstance: {fileID: 1402037838}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1315966679
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315966678}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.11, y: 1.9960136, z: 1.3844384}
+  m_Center: {x: 0.04, y: 0.00000011920929, z: -0.69221824}
+--- !u!114 &1315966680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315966678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 1315966681}
+  sceneViewId: 25
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &1315966681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315966678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c856d6c895343a441bb72b0e65eb0621, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fridgeDoor: {fileID: 216548582}
+  fridgeShelf1: {fileID: 1012151060}
+  fridgeShelf2: {fileID: 236868917}
+  fridgeLight: {fileID: 0}
+  openCloseSpeed: 0.3
+  interactionRange: 3
 --- !u!1001 &1327102273
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9243,10 +9296,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: "Buz dolab\u0131 orta kapak"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      propertyPath: m_TagString
+      value: Fridge
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1315966681}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1315966680}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1315966679}
   m_SourcePrefab: {fileID: 100100000, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
 --- !u!1 &1415438408
 GameObject:
@@ -9446,7 +9512,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
       propertyPath: m_TagString
-      value: Freezer
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9461,9 +9527,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1805566815}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1805566814}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1805566816}
@@ -9787,6 +9850,66 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
   m_PrefabInstance: {fileID: 1939462481}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1468928493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435297062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3baaaacade3ec3d4dbd5da6ac2fe9ef7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  freezerDoor: {fileID: 1468928490}
+  freezerLight: {fileID: 0}
+  openCloseSpeed: 0.3
+  interactionRange: 3
+--- !u!65 &1468928494
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435297062}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.1, y: 1.0020673, z: 1.396129}
+  m_Center: {x: 0.04, y: 0, z: -0.69806355}
+--- !u!114 &1468928495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435297062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 1468928493}
+  sceneViewId: 26
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1494915345
 GameObject:
   m_ObjectHideFlags: 0
@@ -9850,7 +9973,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.06320503}
+  m_AnchoredPosition: {x: 0, y: -0.00001323668}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1001 &1508205257
@@ -10173,7 +10296,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 147119332}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9974556
+  m_Size: 0.9999516
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -11096,22 +11219,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2d5d2c26e1b3da9478d621505c1cbcc3, type: 3}
   m_PrefabInstance: {fileID: 1431250684}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1805566814
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1805566810}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3baaaacade3ec3d4dbd5da6ac2fe9ef7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  freezerDoor: {fileID: 1468928490}
-  freezerLight: {fileID: 719168744}
-  openCloseSpeed: 0.3
-  interactionRange: 3
 --- !u!65 &1805566815
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11151,8 +11258,7 @@ MonoBehaviour:
   Synchronization: 3
   OwnershipTransfer: 0
   observableSearch: 2
-  ObservedComponents:
-  - {fileID: 1805566814}
+  ObservedComponents: []
   sceneViewId: 20
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -11761,7 +11867,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
       propertyPath: m_TagString
-      value: Fridge
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11785,9 +11891,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
       insertIndex: -1
       addedObject: {fileID: 734948789}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 734948788}
   m_SourcePrefab: {fileID: 100100000, guid: 8354e01c47f1c1b4a8d8e0065521a4be, type: 3}
 --- !u!1 &1862259238
 GameObject:
@@ -12493,10 +12596,23 @@ PrefabInstance:
       propertyPath: m_Name
       value: "Buz dolab\u0131 \xFCst kapak"
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      propertyPath: m_TagString
+      value: Freezer
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1468928494}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1468928493}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1468928495}
   m_SourcePrefab: {fileID: 100100000, guid: d8ce6512b132bb045bf6724578c44881, type: 3}
 --- !u!1 &1946102194
 GameObject:
