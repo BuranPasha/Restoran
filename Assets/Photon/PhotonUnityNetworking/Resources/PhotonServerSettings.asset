@@ -101,6 +101,14 @@ MonoBehaviour:
   - RPC_DropItemsWithForce
   - RPC_DropStackedObjectsNormally
   - RPC_ScatterDrop
+  - RPC_SetStored
+  - PlaceItemInSlot
+  - RPC_PlaceObjectInSlot
+  - RPC_PickUpFromSlot
+  - RetrieveItemRPC
+  - RPC_GiveItemToPlayer
+  - RPC_PickUpItemDirectly
+  - StoreItemRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

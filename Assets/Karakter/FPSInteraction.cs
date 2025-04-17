@@ -182,7 +182,14 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         {
             if (heldObject == null)
             {
-                TryPickUp();
+                // Önce slotlardan almaya çalýþ
+                TryPickUpFromSlot();
+
+                // Slotlardan alamazsa normal pickup iþlemi
+                if (heldObject == null)
+                {
+                    TryPickUp();
+                }
             }
             else
             {
@@ -337,28 +344,116 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         Collider col = obj.GetComponent<Collider>();
         if (col != null) col.enabled = true;
     }
-
     void TryPickUp()
     {
-        RaycastHit[] hits = Physics.RaycastAll(Camera.main.ScreenPointToRay(Input.mousePosition), interactionDistance, interactableLayers);
+        RaycastHit[] hits = Physics.RaycastAll(
+            Camera.main.ScreenPointToRay(Input.mousePosition),
+            interactionDistance,
+            interactableLayers,
+            QueryTriggerInteraction.Collide); // Trigger collider'larý da kontrol et
+
         foreach (RaycastHit hit in hits)
         {
-            GameObject objToPick = hit.collider.gameObject;
-            if (!objToPick.CompareTag("Pickable")) continue;
-
-            PhotonView objPV = objToPick.GetComponent<PhotonView>();
-            if (objPV == null) continue;
-
-            if (!objPV.IsMine)
+            // Slotlardan item alma
+            if (hit.collider.CompareTag(leftPositionTag))
             {
-                objPV.TransferOwnership(PhotonNetwork.LocalPlayer);
+                StorageSlot slot = hit.collider.GetComponent<StorageSlot>();
+                if (slot != null && slot.IsOccupied)
+                {
+                    GameObject item = slot.RetrieveItem();
+                    if (item != null)
+                    {
+                        photonView.RPC("RPC_PickUpFromSlot", RpcTarget.AllBuffered,
+                            item.GetComponent<PhotonView>().ViewID);
+                    }
+                    return;
+                }
             }
-
-            photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objPV.ViewID, selectedSlot);
-            break;
+            // Yerdeki item'larý alma (orijinal kod)
+            if (hit.collider.CompareTag("Pickable"))
+            {
+                PhotonView objPV = hit.collider.GetComponent<PhotonView>();
+                if (objPV != null)
+                {
+                    if (!objPV.IsMine)
+                    {
+                        objPV.TransferOwnership(PhotonNetwork.LocalPlayer);
+                    }
+                    photonView.RPC("RPC_PickUpObject", RpcTarget.AllBuffered, objPV.ViewID, selectedSlot);
+                    return;
+                }
+            }
         }
     }
+    void TryPickUpFromSlot()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, interactionDistance))
+        {
+            if (hit.collider.CompareTag(leftPositionTag))
+            {
+                StorageSlot slot = hit.collider.GetComponent<StorageSlot>();
+                if (slot != null && slot.IsOccupied)
+                {
+                    GameObject item = slot.RetrieveItem();
+                    if (item != null)
+                    {
+                        // Doðrudan eline alma mantýðý
+                        heldObject = item;
+                        heldObject.transform.SetParent(holdPosition);
+                        heldObject.transform.localPosition = Vector3.zero;
+                        heldObject.transform.localRotation = Quaternion.identity;
 
+                        Rigidbody rb = heldObject.GetComponent<Rigidbody>();
+                        if (rb != null)
+                        {
+                            rb.isKinematic = true;
+                            rb.detectCollisions = false;
+                        }
+
+                        Debug.Log("Item taken from slot successfully");
+                    }
+                }
+            }
+        }
+    }
+    [PunRPC]
+    void RPC_PickUpFromSlot(int itemViewID)
+    {
+        PhotonView objPV = PhotonView.Find(itemViewID);
+        if (objPV == null) return;
+
+        GameObject item = objPV.gameObject;
+
+        if (photonView.IsMine)
+        {
+            if (heldObject != null)
+            {
+                StoreCurrentItem();
+            }
+
+            heldObject = item;
+            inventory[selectedSlot] = item;
+
+            // Item'ý el pozisyonuna taþý
+            item.transform.SetParent(holdPosition);
+            item.transform.localPosition = Vector3.zero;
+            item.transform.localRotation = Quaternion.identity;
+
+            // Fizik özelliklerini ayarla
+            Rigidbody rb = item.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.isKinematic = true;
+                rb.detectCollisions = false;
+            }
+
+            Collider col = item.GetComponent<Collider>();
+            if (col != null) col.enabled = false;
+
+            currentStackCount = CountItemsInStack(heldObject.transform);
+        }
+    }
     [PunRPC]
     void RPC_PickUpObject(int objectViewID, int slotIndex)
     {
@@ -376,18 +471,15 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         {
             StoreCurrentItem();
         }
-
         selectedSlot = slotIndex;
         heldObject = objToPick;
         inventory[selectedSlot] = heldObject;
-
         // Reset scale when picking up
         StackableItem stackable = heldObject.GetComponent<StackableItem>();
         if (stackable != null)
         {
             heldObject.transform.localScale = stackable.originalScale;
         }
-
         heldObject.transform.SetParent(holdPosition);
         heldObject.transform.localPosition = Vector3.zero;
         heldObject.transform.localRotation = Quaternion.identity;
@@ -404,7 +496,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
 
         currentStackCount = CountItemsInStack(heldObject.transform);
     }
-
     bool TryAddToStack()
     {
         if (heldObject == null || currentStackCount >= maxStackCount) return false;
@@ -414,10 +505,8 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         {
             GameObject targetObj = hit.collider.gameObject;
             if (targetObj == heldObject) continue;
-
             StackableItem targetStack = targetObj.GetComponent<StackableItem>();
             StackableItem heldStack = heldObject.GetComponent<StackableItem>();
-
             if (targetObj.CompareTag("Pickable") &&
                 targetStack != null &&
                 heldStack != null &&
@@ -433,7 +522,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         }
         return false;
     }
-
     [PunRPC]
     void RPC_AddToStack(int itemViewID)
     {
@@ -477,7 +565,6 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         currentStackCount++;
         Debug.Log($"Stack successful! Current count: {currentStackCount}");
     }
-
     Transform GetTopStackPoint()
     {
         if (currentStackCount == 0) return heldObject.transform;
@@ -489,18 +576,108 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         }
         return top;
     }
-
     void TryPlaceObject()
     {
         if (heldObject == null) return;
 
-        GameObject leftPos = GameObject.FindGameObjectWithTag(leftPositionTag);
-        if (leftPos != null && Vector3.Distance(transform.position, leftPos.transform.position) <= interactionDistance)
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, interactionDistance, interactableLayers))
         {
-            photonView.RPC("RPC_PlaceObject", RpcTarget.AllBuffered, heldObject.GetComponent<PhotonView>().ViewID, leftPos.transform.position);
+            Debug.Log("Hit object: " + hit.collider.name + " | Tag: " + hit.collider.tag);
+
+            // LeftPosition tag'ine ve StorageSlot componentine sahip mi kontrol et
+            if (hit.collider.CompareTag(leftPositionTag))
+            {
+                StorageSlot storageSlot = hit.collider.GetComponent<StorageSlot>();
+                if (storageSlot != null)
+                {
+                    Debug.Log("Valid slot found: " + storageSlot.name);
+
+                    if (storageSlot.CanStore(heldObject))
+                    {
+                        Debug.Log("Can store item in slot");
+
+                        int itemViewId = heldObject.GetComponent<PhotonView>().ViewID;
+                        int slotIndex = GetSlotIndex(storageSlot);
+
+                        photonView.RPC("RPC_PlaceObjectInSlot", RpcTarget.AllBuffered, itemViewId, slotIndex);
+                    }
+                    else
+                    {
+                        Debug.Log("Slot cannot store this item (maybe already occupied)");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("LeftPosition tag'li objede StorageSlot componenti yok!");
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("No object hit with raycast");
         }
     }
+    int GetSlotIndex(StorageSlot slot)
+    {
+        GameObject[] slotObjects = GameObject.FindGameObjectsWithTag(leftPositionTag);
+        for (int i = 0; i < slotObjects.Length; i++)
+        {
+            if (slotObjects[i].GetComponent<StorageSlot>() == slot)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    [PunRPC]
+    void RPC_PlaceObjectInSlot(int objectViewID, int slotIndex)
+    {
+        PhotonView objPV = PhotonView.Find(objectViewID);
+        if (objPV == null)
+        {
+            Debug.LogError("Object PhotonView not found!");
+            return;
+        }
 
+        GameObject[] slotObjects = GameObject.FindGameObjectsWithTag(leftPositionTag);
+        if (slotIndex < 0 || slotIndex >= slotObjects.Length)
+        {
+            Debug.LogError("Invalid slot index: " + slotIndex);
+            return;
+        }
+
+        StorageSlot targetSlot = slotObjects[slotIndex].GetComponent<StorageSlot>();
+        if (targetSlot == null)
+        {
+            Debug.LogError("Slot component not found at index: " + slotIndex);
+            return;
+        }
+
+        GameObject objToPlace = objPV.gameObject;
+        Debug.Log("Attempting to place object: " + objToPlace.name + " in slot: " + targetSlot.name);
+
+        if (targetSlot.StoreItem(objToPlace))
+        {
+            Debug.Log("Item placed successfully in slot");
+
+            if (photonView.IsMine && heldObject == objToPlace)
+            {
+                inventory[selectedSlot] = null;
+                heldObject = null;
+                currentStackCount = 0;
+            }
+
+            if (objPV.IsMine)
+            {
+                objPV.TransferOwnership(PhotonNetwork.MasterClient);
+            }
+        }
+        else
+        {
+            Debug.Log("Failed to place item in slot");
+        }
+    }
     [PunRPC]
     void RPC_PlaceObject(int objectViewID, Vector3 position)
     {
@@ -508,10 +685,19 @@ public class FPSInteraction : MonoBehaviourPunCallbacks
         if (objPV == null) return;
 
         GameObject objToPlace = objPV.gameObject;
-        objToPlace.transform.SetParent(null);
+
+        // Nesne, 'StorageSlot' bileþenine yerleþtiriliyor
+        StorageSlot storageSlot = objToPlace.GetComponentInParent<StorageSlot>();
+        if (storageSlot != null)
+        {
+            // Nesnenin yerleþtirilebilmesi için gerekli iþlemler
+            storageSlot.StoreItem(objToPlace);
+        }
+
         objToPlace.transform.position = position;
         objToPlace.transform.rotation = Quaternion.identity;
 
+        // Çocuk nesneleri varsa, bunlarý yerinden çýkarmalýyýz
         List<Transform> children = new List<Transform>();
         foreach (Transform child in objToPlace.transform)
         {

@@ -5154,8 +5154,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.4, y: 2.0108733, z: 1.5}
-  m_Center: {x: 0.14420758, y: -0.65668106, z: 0.00054344535}
+  m_Size: {x: 1.04, y: 2.0108733, z: 1.5}
+  m_Center: {x: 0.05, y: -0.65668106, z: 0.00054344535}
 --- !u!1 &743123274 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3d8daa3981f9c924d91befe5db77015b, type: 3}
@@ -5278,6 +5278,37 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
   m_UseLocal: 1
+--- !u!1 &755695958
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 755695959}
+  m_Layer: 0
+  m_Name: Slot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &755695959
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 755695958}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -11.6823, y: 1.4011, z: 10.2244}
+  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &763754066 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5e2445802a9f4564fa3cc17d93d49f6b, type: 3}
@@ -6070,6 +6101,96 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &837868494
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2074808806769778629, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_Name
+      value: Cube (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2074808806769778629, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_TagString
+      value: LeftPosition
+      objectReference: {fileID: 0}
+    - target: {fileID: 2711798738663339703, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: itemParent
+      value: 
+      objectReference: {fileID: 755695959}
+    - target: {fileID: 2711798738663339703, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: slotVisual
+      value: 
+      objectReference: {fileID: 842752002}
+    - target: {fileID: 4975990521656515242, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: sceneViewId
+      value: 27
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.07
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11.6571
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.4748
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 10.2483
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7701949932696699946, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+--- !u!1 &842752002 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2074808806769778629, guid: 95b261e37ce1d834cb23aead96efb267, type: 3}
+  m_PrefabInstance: {fileID: 837868494}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &868991597
 GameObject:
   m_ObjectHideFlags: 0
@@ -8777,6 +8898,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 1315966681}
+  - {fileID: 1315966684}
   sceneViewId: 25
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -8795,9 +8917,28 @@ MonoBehaviour:
   fridgeDoor: {fileID: 216548582}
   fridgeShelf1: {fileID: 1012151060}
   fridgeShelf2: {fileID: 236868917}
-  fridgeLight: {fileID: 0}
-  openCloseSpeed: 0.3
+  fridgeLight: {fileID: 221684249}
+  openCloseSpeed: 1
   interactionRange: 3
+  fridgeTag: Fridge
+  slotTag: LeftPosition
+  debugMode: 1
+--- !u!114 &1315966684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315966678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1001 &1327102273
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9313,6 +9454,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1315966679}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1315966684}
   m_SourcePrefab: {fileID: 100100000, guid: 01509abcbff7bbc4284ad822731b543e, type: 3}
 --- !u!1 &1415438408
 GameObject:
@@ -9863,7 +10007,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   freezerDoor: {fileID: 1468928490}
-  freezerLight: {fileID: 0}
+  freezerLight: {fileID: 719168744}
   openCloseSpeed: 0.3
   interactionRange: 3
 --- !u!65 &1468928494
@@ -9973,7 +10117,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.00001323668}
+  m_AnchoredPosition: {x: 0, y: 0.0000008199136}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!1001 &1508205257
@@ -10296,7 +10440,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 147119332}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.9999516
+  m_Size: 0.9999852
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -14385,3 +14529,5 @@ SceneRoots:
   - {fileID: 286481691}
   - {fileID: 128095634}
   - {fileID: 926973383}
+  - {fileID: 837868494}
+  - {fileID: 755695959}

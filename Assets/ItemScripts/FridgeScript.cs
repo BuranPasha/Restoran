@@ -4,47 +4,94 @@ using System.Collections;
 
 public class FridgeScript : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public Transform fridgeDoor; // Buzdolabýnýn kapak transformu
-    public Transform fridgeShelf1; // Raf 1
-    public Transform fridgeShelf2; // Raf 2
-    public Light fridgeLight; // Buzdolabýnýn ýþýðý
+    public Transform fridgeDoor;
+    public Transform fridgeShelf1;
+    public Transform fridgeShelf2;
+    public Light fridgeLight;
+    private StorageSlot[] fridgeSlots;
+    private bool isFridgeOpen = false;
+    public float openCloseSpeed = 1f;
+    public float interactionRange = 3f;
 
-    private bool isFridgeOpen = false; // Buzdolabýnýn açýk mý kapalý mý olduðu
-    public float openCloseSpeed = 1f; // Açýlma ve kapanma hýzý
+    private void Awake()
+    {
+        fridgeSlots = GetComponentsInChildren<StorageSlot>(true);
 
-    public float interactionRange = 3f; // Etkileþim mesafesi
+        // Baþlangýçta tüm slotlarý gizle
+        foreach (var slot in fridgeSlots)
+        {
+            if (slot.slotVisual != null)
+                slot.slotVisual.SetActive(false);
+        }
+    }
 
     private void Update()
     {
-        // Raycast ile bakýlan nesneyi tespit et
+        if (!photonView.IsMine) return;
+
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, interactionRange))
         {
-            // Eðer bakýlan nesne buzdolabý ise
             if (hit.collider.CompareTag("Fridge"))
             {
-                if (Input.GetKeyDown(KeyCode.E)) // E tuþuna basýldýðýnda
+                if (Input.GetKeyDown(KeyCode.E))
                 {
-                    if (isFridgeOpen)
+                    photonView.RPC(isFridgeOpen ? "CloseFridge" : "OpenFridge", RpcTarget.AllBuffered);
+                }
+            }
+            else if (hit.collider.CompareTag("FridgeSlot") && isFridgeOpen)
+            {
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    var slot = hit.collider.GetComponent<StorageSlot>();
+                    if (slot != null)
                     {
-                        photonView.RPC("CloseFridge", RpcTarget.AllBuffered); // Tüm oyunculara buzdolabýný kapatma komutu gönderiyoruz
-                    }
-                    else
-                    {
-                        photonView.RPC("OpenFridge", RpcTarget.AllBuffered); // Tüm oyunculara buzdolabýný açma komutu gönderiyoruz
+                        if (slot.IsOccupied)
+                        {
+                            // Eðer slot doluysa itemi çýkar
+                            var item = slot.RetrieveItem();
+                            if (item != null)
+                            {
+                                // Item'i oyuncuya verme mantýðý buraya
+                                Debug.Log("Item retrieved: " + item.name);
+                            }
+                        }
+                        else
+                        {
+                            // Slot boþsa item ekle
+                            var item = GetItemInHand();
+                            if (item != null && item.GetComponent<StorableItem>() != null)
+                            {
+                                photonView.RPC("PlaceItemInSlot", RpcTarget.AllBuffered,
+                                    item.GetComponent<PhotonView>().ViewID,
+                                    System.Array.IndexOf(fridgeSlots, slot));
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    [PunRPC] // PhotonRPC komutlarý
+    [PunRPC]
+    void PlaceItemInSlot(int itemViewId, int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= fridgeSlots.Length) return;
+
+        var item = PhotonView.Find(itemViewId)?.gameObject;
+        if (item != null)
+        {
+            fridgeSlots[slotIndex].StoreItem(item);
+        }
+    }
+
+    [PunRPC]
     void OpenFridge()
     {
         if (!isFridgeOpen)
         {
             isFridgeOpen = true;
-            StopAllCoroutines(); // Eðer bir animasyon devam ediyorsa durduruyoruz
+            StopAllCoroutines();
             StartCoroutine(OpenFridgeCoroutine());
         }
     }
@@ -62,16 +109,21 @@ public class FridgeScript : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator OpenFridgeCoroutine()
     {
-        // Kapak için hedef pozisyonu belirliyoruz (90 derece saða açýlacak)
-        Vector3 targetDoorRotation = fridgeDoor.rotation.eulerAngles + new Vector3(0f, -90f, 0f); // Kapak saða doðru açýlacak
-
-        // Raflar için hareket pozisyonlarý
+        Vector3 targetDoorRotation = fridgeDoor.rotation.eulerAngles + new Vector3(0f, -90f, 0f);
         Vector3 targetShelfPosition1 = fridgeShelf1.position + Vector3.right * 0.5f;
         Vector3 targetShelfPosition2 = fridgeShelf2.position + Vector3.right * 0.5f;
 
-        // Açýlma için süreyi hesaplýyoruz
         float journeyLength = Vector3.Distance(fridgeDoor.position, fridgeDoor.position + Vector3.right * 0.5f);
         float startTime = Time.time;
+
+        fridgeLight.enabled = true;
+
+        // Slot görsellerini aç (sadece boþ olanlar)
+        foreach (var slot in fridgeSlots)
+        {
+            if (slot.slotVisual != null)
+                slot.slotVisual.SetActive(!slot.IsOccupied);
+        }
 
         while (Vector3.Distance(fridgeDoor.position, fridgeDoor.position + Vector3.right * 0.5f) > 0.01f)
         {
@@ -84,22 +136,25 @@ public class FridgeScript : MonoBehaviourPunCallbacks, IPunObservable
 
             yield return null;
         }
-
-        fridgeLight.enabled = true; // Iþýðý açýyoruz
     }
 
     IEnumerator CloseFridgeCoroutine()
     {
-        // Kapak için hedef pozisyonu belirliyoruz (geri 0 derece)
-        Vector3 targetDoorRotation = fridgeDoor.rotation.eulerAngles - new Vector3(0f, -90f, 0f); // Kapak geri kapanacak
-
-        // Raflar için hareket pozisyonlarý
+        Vector3 targetDoorRotation = fridgeDoor.rotation.eulerAngles - new Vector3(0f, -90f, 0f);
         Vector3 targetShelfPosition1 = fridgeShelf1.position - Vector3.right * 0.5f;
         Vector3 targetShelfPosition2 = fridgeShelf2.position - Vector3.right * 0.5f;
 
-        // Kapanma için süreyi hesaplýyoruz
         float journeyLength = Vector3.Distance(fridgeDoor.position, fridgeDoor.position + Vector3.right * 0.5f);
         float startTime = Time.time;
+
+        fridgeLight.enabled = false;
+
+        // Tüm slot görsellerini kapat
+        foreach (var slot in fridgeSlots)
+        {
+            if (slot.slotVisual != null)
+                slot.slotVisual.SetActive(false);
+        }
 
         while (Vector3.Distance(fridgeDoor.position, fridgeDoor.position + Vector3.right * 0.5f) > 0.01f)
         {
@@ -112,20 +167,24 @@ public class FridgeScript : MonoBehaviourPunCallbacks, IPunObservable
 
             yield return null;
         }
-
-        fridgeLight.enabled = false; // Iþýðý kapatýyoruz
     }
 
-    // Photon'dan gelen veriyi senkronize ediyoruz
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.IsWriting) // Veri yazma iþlemi
+        if (stream.IsWriting)
         {
-            stream.SendNext(isFridgeOpen); // Buzdolabýnýn açýk/kapalý durumu
+            stream.SendNext(isFridgeOpen);
         }
-        else // Veri okuma iþlemi
+        else
         {
             isFridgeOpen = (bool)stream.ReceiveNext();
         }
+    }
+
+    private GameObject GetItemInHand()
+    {
+        // Burada oyuncunun elindeki itemi tespit etme mantýðýnýzý uygulayýn
+        // Örnek: PlayerInventory.currentHeldItem gibi
+        return null;
     }
 }

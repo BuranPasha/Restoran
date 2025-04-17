@@ -15,6 +15,7 @@ TagManager:
   - Freezer
   - Fridge
   - Computer
+  - FridgeSlot
   layers:
   - Default
   - TransparentFX
